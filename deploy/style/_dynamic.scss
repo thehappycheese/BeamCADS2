@@ -1,0 +1,225 @@
+.CalcDiv{
+	
+	page-break-inside:avoid;
+	width:100%;
+	border:1px solid grey;
+	margin:5px 0px;
+	
+	.topdiv{
+		width:100%;
+		cursor:pointer;
+		&:hover{
+			background-color:$pri-5;
+		}
+		.titlediv{
+		
+			font-size:100%;
+			line-height:25px;
+			height:25px;
+			padding:5px;
+			display:inline-block;
+			
+			.MathJax{
+				vertical-align:bottom;
+			}
+		}
+		button{
+			width:100%;
+			margin: 0;
+			
+		}
+	}
+	
+	.contentdiv{
+		min-height:20px;
+		padding:5px;
+		border-top: 1px dashed lightgrey;
+		p{
+			margin: 0;
+			margin-left: 20px;
+			margin-top:0.5em;
+			padding:0;
+		}
+	}
+}
+
+
+.reotable{
+	table-layout: fixed;
+	width:100%;
+	border-collapse: collapse;
+	border:1px solid lightgrey;
+	td{
+		border-top:1px solid lightgrey;
+		border-bottom:1px solid lightgrey;
+		padding:2px;
+		font-family:sans-serif;
+		font-size:0.8em;
+		height:20px;
+		line-height: 20px;
+	}
+	tbody, tfoot td{
+		vertical-align:middle;
+		text-align:center;
+	}
+	thead td{
+		border-left:1px solid lightgrey;
+		text-align:center;
+		vertical-align:middle;
+	}
+
+
+	.reoinput {	
+		button{
+			width:13px;
+			height:100%;
+			padding:0;
+			margin:0;
+		}
+		.bars{
+			color:$pri-3;
+			font-weight:bold;
+		}
+		input, select{
+			width:100%;
+			text-align:center;
+			color:inherit;
+			background-color:inherit;
+		}
+		input:disabled, select:disabled{
+			color:white;
+		}
+		input[type="checkbox"]{
+			
+		}
+	}
+	
+}
+
+
+
+
+
+
+//////////////////////////////////
+.protip{
+	flex: 0 0 116px;
+	width:  100%;
+	margin: 5px 0;
+	font-family: sans-serif;
+	
+	
+	.tips, .feedback{
+		color:$pri-3/4;
+		padding:5px;
+		line-height: 16px;
+		font-size:	 14px;
+	}
+	.tips{
+		height:32px;
+		background-color: $sec-b-4*2;
+		padding-left:4em;
+		text-indent:-3em;
+	}
+	.feedback{
+		height:64px;
+		margin:5px;
+		overflow-y:scroll;
+		//background-color: $sec-b-4;
+		.errorlist, .warninglist, .infolist{
+			list-style:none;
+			padding:0;
+			padding-left:3*16px;
+			text-indent:-3*16px;
+			margin:0px;
+		}
+		.errorlist li:before{
+			content:'\2639';
+			margin: 0 8px;
+			color:red;
+		}
+		.warninglist li:before{
+			content:'\2639';
+			margin: 0 8px;
+			color:orange;
+		}
+		.infolist li:before{
+			content:'i';
+			margin: 0 8px;
+			color:grey;
+		}
+	}
+}
+
+
+
+//////////////////////////////////
+.varinput{
+	border:1px solid transparent;
+	border-radius: 4px;
+	margin:1px;
+	display:flex;
+	align-items:center;
+	float:left;
+	border:1px solid lightgrey;
+	
+	td{
+		padding:1px;
+		height:28px;
+	}
+	
+	cursor:pointer;
+	&:hover{
+		border:1px solid grey;
+	}
+	.notation-div{
+		text-align:right;
+		padding-right: 8px;
+		width:4em;
+		font-size:110%;
+		font-style: italic;
+	}
+	.value-div{
+		margin-left:3px;
+		width:4em;
+	}
+	.unit-div{
+		margin-left:0.2em;
+		padding-left:0.2em;
+		font-size:1em;
+		width:2.2em;
+	}
+	.help-div{
+		width:1em;
+		padding:0;
+		button{
+			color: darkblue;
+			font-family: monospace;
+			font-weight: bold;
+			box-sizing:border-box;
+			height: 100%;
+			width: 100%;
+		}
+	}
+	a{
+		color:$pri-3/2;
+		vertical-align:center;
+		&:focus{
+			outline:none;
+		}
+	}
+	input, select{
+		box-sizing:border-box;
+		width:100%;
+		text-align:left;
+	}
+	select{
+		//direction: rtl;
+	}
+	/*input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}*/
+}
+
+

@@ -1,0 +1,316 @@
+.CalcDiv {
+  page-break-inside: avoid;
+  width: 100%;
+  border: 1px solid grey;
+  margin: 5px 0px; }
+  .CalcDiv .topdiv {
+    width: 100%;
+    cursor: pointer; }
+    .CalcDiv .topdiv:hover {
+      background-color: #f6feff; }
+    .CalcDiv .topdiv .titlediv {
+      font-size: 100%;
+      line-height: 25px;
+      height: 25px;
+      padding: 5px;
+      display: inline-block; }
+      .CalcDiv .topdiv .titlediv .MathJax {
+        vertical-align: bottom; }
+    .CalcDiv .topdiv button {
+      width: 100%;
+      margin: 0; }
+  .CalcDiv .contentdiv {
+    min-height: 20px;
+    padding: 5px;
+    border-top: 1px dashed lightgrey; }
+    .CalcDiv .contentdiv p {
+      margin: 0;
+      margin-left: 20px;
+      margin-top: 0.5em;
+      padding: 0; }
+
+.reotable {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid lightgrey; }
+  .reotable td {
+    border-top: 1px solid lightgrey;
+    border-bottom: 1px solid lightgrey;
+    padding: 2px;
+    font-family: sans-serif;
+    font-size: 0.8em;
+    height: 20px;
+    line-height: 20px; }
+  .reotable tbody, .reotable tfoot td {
+    vertical-align: middle;
+    text-align: center; }
+  .reotable thead td {
+    border-left: 1px solid lightgrey;
+    text-align: center;
+    vertical-align: middle; }
+  .reotable .reoinput button {
+    width: 13px;
+    height: 100%;
+    padding: 0;
+    margin: 0; }
+  .reotable .reoinput .bars {
+    color: #3e9cad;
+    font-weight: bold; }
+  .reotable .reoinput input, .reotable .reoinput select {
+    width: 100%;
+    text-align: center;
+    color: inherit;
+    background-color: inherit; }
+  .reotable .reoinput input:disabled, .reotable .reoinput select:disabled {
+    color: white; }
+
+.protip {
+  flex: 0 0 116px;
+  width: 100%;
+  margin: 5px 0;
+  font-family: sans-serif; }
+  .protip .tips, .protip .feedback {
+    color: #0f272b;
+    padding: 5px;
+    line-height: 16px;
+    font-size: 14px; }
+  .protip .tips {
+    height: 32px;
+    background-color: white;
+    padding-left: 4em;
+    text-indent: -3em; }
+  .protip .feedback {
+    height: 64px;
+    margin: 5px;
+    overflow-y: scroll; }
+    .protip .feedback .errorlist, .protip .feedback .warninglist, .protip .feedback .infolist {
+      list-style: none;
+      padding: 0;
+      padding-left: 48px;
+      text-indent: -48px;
+      margin: 0px; }
+    .protip .feedback .errorlist li:before {
+      content: '\2639';
+      margin: 0 8px;
+      color: red; }
+    .protip .feedback .warninglist li:before {
+      content: '\2639';
+      margin: 0 8px;
+      color: orange; }
+    .protip .feedback .infolist li:before {
+      content: 'i';
+      margin: 0 8px;
+      color: grey; }
+
+.varinput {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin: 1px;
+  display: flex;
+  align-items: center;
+  float: left;
+  border: 1px solid lightgrey;
+  cursor: pointer;
+  /*input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
+  	-webkit-appearance: none;
+  	margin: 0;
+  }*/ }
+  .varinput td {
+    padding: 1px;
+    height: 28px; }
+  .varinput:hover {
+    border: 1px solid grey; }
+  .varinput .notation-div {
+    text-align: right;
+    padding-right: 8px;
+    width: 4em;
+    font-size: 110%;
+    font-style: italic; }
+  .varinput .value-div {
+    margin-left: 3px;
+    width: 4em; }
+  .varinput .unit-div {
+    margin-left: 0.2em;
+    padding-left: 0.2em;
+    font-size: 1em;
+    width: 2.2em; }
+  .varinput .help-div {
+    width: 1em;
+    padding: 0; }
+    .varinput .help-div button {
+      color: darkblue;
+      font-family: monospace;
+      font-weight: bold;
+      box-sizing: border-box;
+      height: 100%;
+      width: 100%; }
+  .varinput a {
+    color: #1f4e56;
+    vertical-align: center; }
+    .varinput a:focus {
+      outline: none; }
+  .varinput input, .varinput select {
+    box-sizing: border-box;
+    width: 100%;
+    text-align: left; }
+
+html {
+  height: 100%; }
+
+body {
+  font-size: 16px;
+  height: 100%;
+  margin: 0;
+  padding: 0px;
+  background: #E9E9E9;
+  display: flex;
+  flex-direction: row; }
+
+input:invalid, select:invalid {
+  background-color: yellow;
+  color: red; }
+
+h1, h2, h3, h4 {
+  font-family: sans-serif;
+  font-weight: bold;
+  color: #3e9cad; }
+
+h1 {
+  font-size: 22pt;
+  margin: 0; }
+
+h2 {
+  font-size: 14pt;
+  margin: 2px 10px; }
+
+h3 {
+  font-size: 10pt;
+  margin: 0; }
+
+.bmpblock {
+  padding: 5px;
+  background-color: white; }
+
+#maincol {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  flex: 1 1 800px;
+  height: calc(100% - 4px - 6px);
+  margin: 3px;
+  overflow-y: scroll;
+  border: 2px inset;
+  border-color: white;
+  background-color: white; }
+
+#secondarycol {
+  display: flex;
+  flex-direction: column;
+  display: flex;
+  flex: 0 1 500px;
+  max-width: 500px;
+  height: calc(100% - 4px - 6px);
+  margin: 3px;
+  margin-right: 0px;
+  border: 2px inset;
+  border-color: white;
+  background-color: white; }
+
+#calcdiv {
+  flex: 1 0 450px;
+  min-height: 800px; }
+
+#apptitlebox {
+  flex: 0 0 auto;
+  font-family: sans-serif;
+  font-weight: bold;
+  color: #3e9cad;
+  text-align: left;
+  padding: 5px; }
+  #apptitlebox h1 {
+    font-size: 1.5em;
+    line-height: 2em;
+    padding: 0;
+    margin: 0; }
+  #apptitlebox a {
+    color: red;
+    display: block;
+    text-align: center;
+    border: 1px solid grey;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 3px; }
+
+#invardiv {
+  flex: 1 1 auto;
+  padding: 5px; }
+
+#varinfodiv {
+  flex: 1 1 500px;
+  padding: 5px;
+  margin: 5px;
+  overflow-y: scroll;
+  border-top: 1px solid lightgrey; }
+  #varinfodiv p b {
+    margin-left: 1em; }
+  #varinfodiv h1 {
+    font-size: 1.1em; }
+  #varinfodiv h2 {
+    font-size: 1em;
+    margin-top: 1em;
+    margin-left: 0em;
+    margin-bottom: 0.5em; }
+  #varinfodiv li {
+    font-family: sans-serif;
+    font-size: 0.9em; }
+  #varinfodiv table.help_bar_link {
+    width: 100%;
+    border-collapse: collapse;
+    text-decoration: inherit;
+    color: inherit; }
+    #varinfodiv table.help_bar_link td {
+      border-bottom: 1px solid grey;
+      padding: 2px; }
+    #varinfodiv table.help_bar_link .c1 {
+      width: 5em;
+      text-align: center; }
+    #varinfodiv table.help_bar_link .c2 {
+      font-size: 0.9em;
+      font-family: sans-serif; }
+  #varinfodiv table.help_bar_coderef {
+    width: 100%;
+    border-collapse: collapse; }
+    #varinfodiv table.help_bar_coderef td {
+      border: 1px solid grey;
+      padding: 2px; }
+    #varinfodiv table.help_bar_coderef .c1 {
+      width: 30%;
+      font-family: sans-serif;
+      font-size: 0.9em;
+      font-weight: bold; }
+  #varinfodiv img {
+    max-width: 100%;
+    display: block;
+    margin: 20px auto; }
+
+#reoinputdiv {
+  flex: 1 1 365px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: space-around;
+  display: flex; }
+  #reoinputdiv #reoinputdiv-content {
+    width: 100%; }
+
+#crosssectiondiv {
+  flex: 0 0 auto; }
+
+.calcerror {
+  width: 100%;
+  background-color: lightyellow;
+  color: red;
+  border: 1px sold red;
+  padding: 4px; }

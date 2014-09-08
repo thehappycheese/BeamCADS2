@@ -1,0 +1,141 @@
+<!doctype html>
+	<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="x-ua-compatible" content="IE=Edge"/>
+	<link rel="stylesheet" href="style/index.css" type="text/css"/>
+	<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			extensions: ["tex2jax.js"],
+			jax: ["input/TeX","output/HTML-CSS"],
+			tex2jax: {inlineMath: [["$$","$$"],["$$$","$$$"]]},
+			messageStyle: "none",
+			skipStartupTypeset: true,
+			menuSettings: {
+				//context: "Browser"
+			},
+			Tex:{
+				extensions: ["color.js"]
+			}
+		});
+	</script>
+
+<!--ignore_next_line -->
+<!--
+	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!---->
+<!--ignore_next_line -->
+<script type="text/javascript" src="js/mathjax/MathJax.js"></script>
+
+
+	<title>BeamCalc</title>
+</head>
+
+
+<body>
+	<div id="secondarycol">
+		<div id="apptitlebox" class="bmpblock">
+			<!--<h1>BeamCalc</h1>-->
+			<a href="img/extended_info_sheet.pdf" download="InfoSheet.pdf">Click here to download extended information sheet / and ethical approval</a>
+		</div>
+		
+		
+		<div id="protips" class="protip">
+			<div class="tips"></div>
+			<div class="feedback"></div>
+		</div>
+		
+		<div id="varinfodiv" class="bmpblock" >
+			<!-- 
+				HELP INFO GOES HERE
+			-->
+		</div>
+	</div>
+	
+	<div id="maincol">	
+		
+		
+		<div id="invardiv" class="bmpblock">
+			<div style="width:100%;">
+				<h2>General Variables</h2>
+			</div>
+			<div id="invardiv-content">
+				<!--
+					Variable inputs go here!
+				-->
+			</div>
+		</div>
+		
+		<div id="reoinputdiv" class="bmpblock">
+			<div style="width:100%;">
+				<h2>Reinforcement Information</h2>
+			</div>
+			<div id="reoinputdiv-content">
+				<table class="reotable" style="">
+					<thead>
+						<tr style="font-family:sans-serif;">
+							<td style="width:4em;" data-tooltip="Number used to refer to a layer of reinforcement.">
+								Layer<br>Number
+							</td>
+							<td style="width:5em;border-left:none;">Enabled<br>&nbsp;</td>
+							<td style="width:3em;">Bars<br>&nbsp;</td>
+							<td style="width:30px;border-left:none;"></td>
+							<td style="width:6em;">Top/Bottom<br>Position</td>
+							<td style="min-width:3em;">Gap<br>(mm)</td>
+							<td style="min-width:3em;">Area<br>(mm&sup2;)</td>
+							<td style="min-width:3em;">Depth<br>(mm)</td>
+						</tr>
+					</thead>
+					<tbody id="reorows">
+						<!--
+							REO INPUT CONTROLS HERE
+						-->
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan=6 style="text-align:right;">Sum of Areas:</td>
+							<td id="reosumarea" style="border-top:2px solid black;border-bottom:2px solid black;">TODO</td>
+							<td></td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+		
+		
+		<div id="crosssectiondiv" class="bmpblock" style="">
+			<h2>Cross Section</h2>
+			<canvas width="450" height="400" id="crosssectioncanvas" >
+				There has been some error! A beam cross section should show up here!
+			</canvas>
+			<br/>
+			<label for="bananaforscalecheck" onclick="b.drawSection(cs_ctx);" data-tooltip="A banana is a poor measure of scale. Please think about how big the real beam is.">
+				<input type="checkbox" id="bananaforscalecheck"/> Show Banana For Scale.
+			</label>
+			<img id="bananascale" src="img/scale.png" style="display:none;"/>
+			<p>Note that greyed out bars are shown for crack control. Not included in strength calcs.</p>
+		</div>
+		
+		<div style="flex: 0 0 100%;"></div>
+		
+		<div id="calcdiv" style="" class="bmpblock">
+			<div style="width:100%;">
+				<h2>Calculations</h2>
+			</div>
+			<div id="calcdiv-content">
+				<canvas style="margin-top:10px;margin-bottom:10px;" class="dncanvas" width="480" height="300">Canvas not shown</canvas>
+			</div>
+		</div>
+	</div>
+	
+	
+</body>
+
+
+<!--ignore_next_line -->
+<script data-root="./" data-main="js/main.js" src="js/nickRequire.js"></script>
+
+<script>
+///* js/main.js
+</script>
+	</html>

@@ -1,0 +1,804 @@
+{
+	"Ag": {
+		"id": "Ag",
+		"name": "Gross sectional area",
+		"description": "Gross cross-sectional area of a member",
+		"notation": "A_g",
+		"unicode": "A_g",
+		"default": "",
+		"unit": "mm\u00b2",
+		"related": [
+			"Ast",
+			"As",
+			"Acc",
+			"Asc",
+			"Self Weight"
+		],
+		"docs": "<p>For a rectangular beam: $$$A_g = b \\times D$$$</p>\n\n<img src=\"img/bD.png\" />",
+		"coderef": []
+	},
+	"alpha2": {
+		"id": "alpha2",
+		"name": "Alpha2 Coefficient",
+		"description": "Coefficient of concrete compressive area in the \"Equivalent compression block method\"",
+		"notation": "\\alpha_2",
+		"unicode": "\u03b1\u2082",
+		"default": "",
+		"unit": "",
+		"related": [
+			"gamma",
+			"fc",
+			"Asc",
+			"Muo"
+		],
+		"docs": "<p>\n    $$$\\alpha_2$$$ is a reduction factor for concrete strength.\n</p>\n<p>\n    [$$$\\alpha_2 f'_c$$$] represents the reduced characteristic compressive strength of concrete in the rectangular stress block method.\n</p>",
+		"coderef": [
+			{
+				"ref": "AS3600 8.1.3",
+				"data": "$$$\\alpha_2 =  1.0  - 0.003 f'_c$$$<br>\nWithin the limits of <br>\n$$$0.67 \\le \\alpha_2 \\le 0.85$$$"
+			}
+		]
+	},
+	"Acc": {
+		"id": "Acc",
+		"name": "Area of concrete under compression in the 'rectangular stress block' method",
+		"description": "",
+		"notation": "A_{cc}",
+		"unicode": "A_cc",
+		"default": "",
+		"unit": "mm\u00b2",
+		"related": [
+			"Acc",
+			"Ag",
+			"As",
+			"Ast",
+			"dn",
+			"ku"
+		],
+		"docs": "<p>The following diagram shows this area hatched in green:</p>\n<img src=\"img/rectangular_stress_block_forces.png\" alt=\"// TODO: add image here.\"></img>\n<p>In a rectanular beam this area can be found by\n    $$\\begin{aligned} A_{cc} &= (b)(\\gamma d_n) \\\\\n                             &= (b)(\\gamma [k_u \\times d]) \\\\\n                             &= (b)(\\gamma [k_{uo} \\times d_0]) \n    \\end{aligned}$$\n</p>",
+		"coderef": []
+	},
+	"As": {
+		"id": "As",
+		"name": "Area of reinforcement",
+		"description": "Cross-sectional area of reinforcement steel",
+		"notation": "A_s",
+		"unicode": "A_s",
+		"default": "",
+		"unit": "mm\u00b2",
+		"related": [
+			"Ast",
+			"Asc",
+			"Acc",
+			"Ag"
+		],
+		"docs": "<p>\n    The following table is taken from ONESTEEL datasheets\n    which can be found at this link\n    <a href=\"http://www.reinforcing.com.au/~/media/OneSteel%20Reinforcing/Case%20Study%20PDFs/Technical%20Resources%20PDFs/REODATA40.pdf\">REODATA 4.0</a>\n<p>\n\n<p style=\"font-style:italic;\">\n   (Note: These areas are not quite the same as what you would find from standard geometry <span style=\"font-family:serif;\">&pi;r&sup2;</span>)\n</p>\n\n<table style=\"text-align:center;width:100%;\">\n    <tr style=\"font-weight: bold;\"><td>Nominal Diameter<br>(mm)</td><td>Cross Sectional Area<br>(mm&sup2;)</td></tr>\n    <tr><td>10</td><td>78</td></tr>\n    <tr><td>12</td><td>113</td></tr>\n    <tr><td>16</td><td>201</td></tr>\n    <tr><td>20</td><td>314</td></tr>\n    <tr><td>24</td><td>452</td></tr>\n    <tr><td>28</td><td>616</td></tr>\n    <tr><td>32</td><td>804</td></tr>\n    <tr><td>36</td><td>1020</td></tr>\n    <tr><td>40</td><td>1260</td></tr>\n</table>",
+		"coderef": [
+			{
+				"ref": "AS3600 3.4.4.2",
+				"data": "Loss of prestress due to shrinkage of the concrete"
+			},
+			{
+				"ref": "AS3600 13.2.2",
+				"data": "Affects the required development length for lapped splices in tension."
+			}
+		]
+	},
+	"Asc": {
+		"id": "Asc",
+		"name": "Area of compressive steel",
+		"description": "Cross-sectional area of compressive reinforcement",
+		"notation": "A_{sc}",
+		"unicode": "A_sc",
+		"default": "",
+		"unit": "mm\u00b2",
+		"related": [
+			"Acc",
+			"Ag",
+			"As",
+			"Ast"
+		],
+		"docs": "<p>\n    Compressive reinforcement is shown as blue rectangles in the image below:\n</p>\n\n<img src=\"\" alt=\"// TODO: Image here\" />\n\n<p>\n    Note that all reinforcement above the neutral axis will be compressive.\n</p>\n\n<p>\n    Also note that this software will always include any reinforcement entered in calculations. In practice you may choose to disclude any reinforcement which is near the neutral axis since it makes a negligible contribution to the capacity.\n</p>",
+		"coderef": []
+	},
+	"Ast": {
+		"id": "Ast",
+		"name": "Area of tensile steel",
+		"description": "Cross-sectional area of longitudinal tensile reinforcement; or cross-sectional area of reinforcement in the zone that would be in tension under the design loads if the effects of prestress and axial loads are ignored",
+		"notation": "A_{st}",
+		"unicode": "A_st",
+		"default": "",
+		"unit": "mm\u00b2",
+		"related": [
+			"Acc",
+			"Ag",
+			"As",
+			"Asc",
+			"Muomin"
+		],
+		"docs": "<p>\n    Tensile reinforcement is shown as red circles in the image below:\n</p>\n\n<img src=\"\" alt=\"// TODO: Image here\" />\n\n<p>\n    Note that all reinforcement below the neutral axis will be tensile.\n</p>\n\n<p>\n    Also note that this software will always include any reinforcement entered in calculations. In practice you may choose to disclude any reinforcement which is near the neutral axis since it makes a negligible contribution to the capacity.\n</p>",
+		"coderef": [
+			{
+				"ref": "AS3600 8.1.6.1",
+				"data": "<p>Minimum Strength Requirements:</p>\n\n<p>This section of the code specifies the minimum $$$A_{st}$$$ required to satisfy the 'Minimum Strength Requirement'. See this section of the code for more details.</p>"
+			}
+		]
+	},
+	"b": {
+		"id": "b",
+		"name": "Breadth of beam",
+		"description": "Width of a rectangular cross-section or member",
+		"notation": "b",
+		"unicode": "b",
+		"default": 300,
+		"unit": "mm",
+		"related": [
+			"cover",
+			"d",
+			"Depth"
+		],
+		"docs": "<img src=\"img/bD.png\" />",
+		"coderef": []
+	},
+	"Cc": {
+		"id": "Cc",
+		"name": "Concrete Compression",
+		"description": "The amount of concrete compression in the rectangular stress block method",
+		"notation": "C_c",
+		"unicode": "C_c",
+		"default": "",
+		"unit": "kN",
+		"related": [
+			"Cs",
+			"Ts",
+			"Acc"
+		],
+		"docs": "<p>\n    The following image shows the area overwhich $$$C_c$$$ acts in green:\n</p>\n<img src=\"img/rectangular_stress_block_forces.png\" alt=\"// TODO: add image here.\"></img>",
+		"coderef": []
+	},
+	"Cs": {
+		"id": "Cs",
+		"name": "Steel Compression",
+		"description": "The amount of compression in all compressive reo layers",
+		"notation": "C_s",
+		"unicode": "C_s",
+		"default": "",
+		"unit": "kN",
+		"related": [
+			"Cc",
+			"Ts",
+			"Asc"
+		],
+		"docs": "<p>\n    The layers which contribute to the steel compression force are shown in blue in the diagram below:\n</p>\n\n<img src=\"img/rectangular_stress_block_forces.png\" alt=\"// TODO: add image here.\"></img>",
+		"coderef": []
+	},
+	"d": {
+		"id": "d",
+		"name": "Depth to tensile steel centroid",
+		"description": "'Effective Depth' of a cross-section in the plane of bending",
+		"notation": "d",
+		"unicode": "d",
+		"default": "",
+		"unit": "mm",
+		"related": [
+			"b",
+			"Depth",
+			"do",
+			"dn",
+			"ku",
+			"kuo"
+		],
+		"docs": "\n<p>\n    $$$d$$$ is the depth to the centroid of the tensile steel layers. Finding d requires that you know/guess which layers are in tension.\n</p>\n<p> The following image illustrates the location size of $$$d$$$</p>\n\n<img src=\"img/rectangular_stress_block_forces_d.png\" alt=\"//TODO: image\"></img>",
+		"coderef": []
+	},
+	"Depth": {
+		"id": "Depth",
+		"name": "Depth of beam",
+		"description": "Overall depth of a cross-section in the plane of bending (see Clause 12.5.6)",
+		"notation": "D",
+		"unicode": "D",
+		"default": 600,
+		"unit": "mm",
+		"related": [
+			"Ln",
+			"b",
+			"d",
+			"do",
+			"dn",
+			"Ag"
+		],
+		"docs": "<img src=\"img/bD.png\" />",
+		"coderef": []
+	},
+	"deflim": {
+		"id": "deflim",
+		"name": "Deflection Limit",
+		"description": "",
+		"notation": "\\Delta/L_{ef}",
+		"unicode": "\u0394/L_ef",
+		"default": "",
+		"unit": "",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"dfitments": {
+		"id": "dfitments",
+		"name": "Diameter of Fitment",
+		"description": "",
+		"notation": "d_f",
+		"unicode": "d_f",
+		"default": 10,
+		"unit": "mm",
+		"related": [
+			"cover"
+		],
+		"docs": "<p>\n    The fitment diameter is governed by crack control and sheer strength requirements.\n</p>\n<img src=\"\" alt=\"// TODO: add image here\"/>",
+		"coderef": []
+	},
+	"dn": {
+		"id": "dn",
+		"name": "Depth to neutral axis",
+		"description": "Depth to neutral axis, measured from the extreme compressive surface of a cross section.",
+		"notation": "d_n",
+		"unicode": "d_n",
+		"default": "",
+		"unit": "mm",
+		"related": [
+			"Depth",
+			"kuo",
+			"ku",
+			"gamma",
+			"Acc",
+			"Cc"
+		],
+		"docs": "<img src=\"img/rectangular_stress_block_forces.png\" alt=\"// TODO: add image here.\"></img>",
+		"coderef": []
+	},
+	"do": {
+		"id": "do",
+		"name": "Depth to lowest bar",
+		"description": "Distance from the extreme compressive fibre of the concrete to the centroid of the outermost layer of tensile reinforcement or tendons (not less than 0.8D for prestressed concrete members)",
+		"notation": "d_o",
+		"unicode": "d_o",
+		"default": "",
+		"unit": "",
+		"related": [
+			"kuo"
+		],
+		"docs": "",
+		"coderef": []
+	},
+	"Ec": {
+		"id": "Ec",
+		"name": "Concrete modulus of elasticity",
+		"description": "Mean value of the modulus of elasticity (Young's Modulus) of concrete at 28 days",
+		"notation": "E_c",
+		"unicode": "E_c",
+		"default": "",
+		"unit": "GPa",
+		"related": [
+			"Es"
+		],
+		"docs": "",
+		"coderef": [
+			{
+				"ref": "AS3600 Table 3.1.2",
+				"data": "E<sub>c</sub> can be found from this table."
+			}
+		]
+	},
+	"eclass": {
+		"id": "eclass",
+		"name": "Exposure Classification",
+		"description": "Designation of the most severe environment to which a concrete member is to be subjected during its design life.",
+		"notation": "",
+		"unicode": "",
+		"default": "",
+		"unit": "",
+		"related": [
+			"cover",
+			"fc"
+		],
+		"docs": "",
+		"coderef": [
+			{
+				"ref": "AS3600 Table 4.3",
+				"data": "Describes the surface and exposure environment which determine Exposure Classification."
+			},
+			{
+				"ref": "AS3600 Table 4.10.3.2",
+				"data": "Required cover and f'<sub>c</sub> for each exposure class under sandard formwork and compaction. <b>(Used in this software)</b>"
+			},
+			{
+				"ref": "AS3600 Table 4.10.3.3",
+				"data": "Required cover and f'<sub>c</sub> for each exposure class for rigid formwork and intense compaction."
+			}
+		]
+	},
+	"epsiloncmax": {
+		"id": "epsiloncmax",
+		"name": "Maximum concrete strain",
+		"description": "Maximum compressive concrete strain",
+		"notation": "\\epsilon_{c max}",
+		"unicode": "\u03b5_c_max",
+		"default": 0.003,
+		"unit": "",
+		"related": [
+			"epsilonsi"
+		],
+		"docs": "",
+		"coderef": [
+			{
+				"ref": "AS3600 8.1",
+				"data": "<p>Requires $$$\\epsilon_{c max} \\le 0.003$$$</p>"
+			}
+		]
+	},
+	"epsilonsi": {
+		"id": "epsilonsi",
+		"name": "Steel Strain in Layer i",
+		"description": "",
+		"notation": "\\epsilon_{s i}",
+		"unicode": "\u03b5_s_i",
+		"default": null,
+		"unit": "",
+		"related": [
+			"dn",
+			"epsilonsy",
+			"epsiloncmax"
+		],
+		"docs": "<p>$$$\\epsilon_{s i}$$$ is used in this software to denote  the strain found in a particular layer of reinforcement</p>\n\n<p>\n    $$\\epsilon_{si} = \\frac{\\epsilon_{c max}}{d_n} \\times (d_i-d_n) = 0.003 ({{d_i}\\over{d_n}} - 1)$$\n</p>\n<p>\n    $$$\\begin{aligned}\n    Where~~~~d_i    &= \\text{the depth to the reo layer} \\\\\n    d_n             &= \\text{the depth to neutral axis} \\\\\n    \\epsilon_{c max} &= 0.003 \\text{(maximum concrete compressive strain)} \\\\\n    \\end{aligned}\n    $$$\n</p>\n\n<p>Negative values of $$$\\epsilon_{s i}$$$ indicate compression.</p>\n<p>This formula is derived by similar triangles from the 'strain diagram' shown in pink/magenta above the calculations in this software.</p>",
+		"coderef": []
+	},
+	"epsilonsy": {
+		"id": "epsilonsy",
+		"name": "Steel Yeild Strain",
+		"description": "",
+		"notation": "\\epsilon_{sy}",
+		"unicode": "\u03b5_s_y",
+		"default": null,
+		"unit": "",
+		"related": [
+			"epsilonsi",
+			"epsiloncmax",
+			"fsy",
+			"Es"
+		],
+		"docs": "<p>$$$\\epsilon_{sy}$$$ is the strain of reinforcement steel when it yeilds</p>\n<p> For a particular reinforcing steel it is calculated as follows from youngs modulus:</p>\n\n<p>\n    $$\\epsilon_{sy} =\\frac{f_{sy}}{E_s}$$\n    Thus for 500Mpa reo bar with a Youngs Modulus of 200GPa:\n    $$\\epsilon_{sy} = \\frac{500 MPa}{200 000MPa} = 0.0025$$\n</p>\n<p>\n    This value is used to find the force in a yeilded layer of steel. The actual value of strain in a layer of steel may be much higher, but the theoretical highest force is:\n    \n</p>\n<p>\n    $$Layer Force = E_s \\times \\epsilon_{sy} \\times Layer Area$$\n</p>",
+		"coderef": []
+	},
+	"fc": {
+		"id": "fc",
+		"name": "Concrete characteristic strength",
+		"description": "Characteristic compressive (cylinder) strength of concrete at 28 days",
+		"notation": "f'_{c}",
+		"unicode": "f'_c",
+		"default": null,
+		"unit": "MPa",
+		"related": [
+			"cover",
+			"fsy",
+			"eclass",
+			"fcm",
+			"fcmi",
+			"fctf"
+		],
+		"docs": "",
+		"coderef": [
+			{
+				"ref": "AS3600 1.1.2",
+				"data": "limits $$$f'_c$$$ to  between 20MPa and 100MPa."
+			},
+			{
+				"ref": "AS3600 3.1.1.1",
+				"data": "<p>Lists standard grades: [20, 25, 32, 40, 50, 65, 80, 100] MPa</p>\n<p>Determined by standard grade/curing conditions (AS1379) or Determined statistically from tests (AS1012.9)</p>"
+			}
+		]
+	},
+	"fcm": {
+		"id": "fcm",
+		"name": "Mean Cylinder Strength",
+		"description": "Mean value of cylinder strength (see Clause 3.1.1.2)",
+		"notation": "f_{cm}",
+		"unicode": "f_cm",
+		"default": "",
+		"unit": "",
+		"related": [
+			"fc",
+			"fsy",
+			"fcmi",
+			"fctf"
+		],
+		"docs": "",
+		"coderef": []
+	},
+	"fcmi": {
+		"id": "fcmi",
+		"name": "Mean In-situ Strength",
+		"description": "Mean value of the in-situ compressive strength of concrete at the relevant age (see Clause 3.1.1.2 and Table 3.1.2)",
+		"notation": "f_{cmi}",
+		"unicode": "f_cmi",
+		"default": "",
+		"unit": "",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"fctf": {
+		"id": "fctf",
+		"name": "Concrete characteristic tensile strength",
+		"description": "Measured flexural tensile strength of concrete (see Clause 3.1.1.3)",
+		"notation": "f'_{ct.f}",
+		"unicode": "f'_ct.f",
+		"default": "",
+		"unit": "MPa",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"fsy": {
+		"id": "fsy",
+		"name": "Steel characteristic yield strength",
+		"description": "Characteristic yield strength of reinforcement (referred to as Re in AS/NZS 4671), determined in accordance with Clause 3.2.1",
+		"notation": "f_{sy}",
+		"unicode": "f_sy",
+		"default": 500,
+		"unit": "MPa",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"gamma": {
+		"id": "gamma",
+		"name": "Gamma Ratio",
+		"description": "Ratio, under design bending or design combined bending and compression, of the depth of the assumed rectangular compressive stress block to k_u * d",
+		"notation": "\\gamma",
+		"unicode": "\u03b3",
+		"default": "",
+		"unit": "",
+		"related": [
+			"alpha2",
+			"gamma",
+			"dn",
+			"ku",
+			"kuo",
+			"Muo"
+		],
+		"docs": "<img src=\"img/rectangular_stress_block_forces.png\" alt=\"// TODO: add image here.\"></img>",
+		"coderef": [
+			{
+				"ref": "AS3600 8.1.3(ii)",
+				"data": "$$$\\gamma = 1.05 - 0.007 f'_c$$$ <br>\nWhere<br>\n$$$0.67 \\le \\gamma \\le 0.85 $$$"
+			}
+		]
+	},
+	"I": {
+		"id": "I",
+		"name": "Second moment of area",
+		"description": "Second moment of area of the uncracked concrete cross-section about the centroidal axis",
+		"notation": "I",
+		"unicode": "I",
+		"default": "",
+		"unit": "mm\u2074",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"Icr": {
+		"id": "Icr",
+		"name": "Transformed area second moment of area",
+		"description": "Second moment of area of a cracked section with the reinforcement transformed to an equivalent area of concrete",
+		"notation": "I_{cr}",
+		"unicode": "I_cr",
+		"default": "",
+		"unit": "mm\u2074",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"Ief": {
+		"id": "Ief",
+		"name": "Effective second moment of area",
+		"description": "Effective second moment of area (see Clause 8.5.3)",
+		"notation": "I_{ef}",
+		"unicode": "I_ef",
+		"default": "",
+		"unit": "mm\u2074",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"Iefmax": {
+		"id": "Iefmax",
+		"name": "Maximum effective second moment of area",
+		"description": "Maximum effective second moment of area (see Clause 8.5.3)",
+		"notation": "I_{ef.max}",
+		"unicode": "I_ef.max",
+		"default": "",
+		"unit": "mm\u2074",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"ku": {
+		"id": "ku",
+		"name": "ku Ratio",
+		"description": "Neutral axis parameter being the ratio, at ultimate strength under any combination of bending and compression, of the depth to the neutral axis from the extreme compressive fibre to d",
+		"notation": "k_u",
+		"unicode": "k_u",
+		"default": "",
+		"unit": "",
+		"related": [
+			"kuo",
+			"d",
+			"dn",
+			"gamma"
+		],
+		"docs": "<p>\n    $$ k_u = \\frac{d_n}{d} $$\n</p>",
+		"coderef": [
+			{
+				"ref": "AS3600 6.2.7.2",
+				"data": "Part of the requirements for the Deemed-to-comply approach for reinforced and prestressed members"
+			},
+			{
+				"ref": "AS3600 8.1.3",
+				"data": "<p>Part of the rectangular stress block method. In this method, there is a uniform compressive stress of $$$\\alpha_2 f'_c$$$ at the top of the cross sectio to a line at a depth of $$$\\gamma k_u d$$$</p>\n\n<p><img src=\"\" alt=\"// TODO: Put image here.\"/></p>"
+			}
+		]
+	},
+	"kuo": {
+		"id": "kuo",
+		"name": "kuo Ratio",
+		"description": "Ratio, at ultimate strength, without axial force of the depth to the neutral axis from the extreme compressive fibre to d_o",
+		"notation": "k_{uo}",
+		"unicode": "k_uo",
+		"default": "",
+		"unit": "",
+		"related": [
+			"ku",
+			"dn",
+			"do",
+			"Mub",
+			"Nub"
+		],
+		"docs": "\n\n<p>\n    $$k_{uo} = \\frac{d_n}{d_o}$$\n</p>",
+		"coderef": [
+			{
+				"ref": "AS3600 8.1.5",
+				"data": "Limits $$$k_{uo}$$$ to 0.36 (except for special circumstances - see code)"
+			}
+		]
+	},
+	"Lef": {
+		"id": "Lef",
+		"name": "Effective Length",
+		"description": "Effective span of a member, taken as the lesser of (Ln + D) and L for a beam or slab; or L_n + D/2 for a cantilever",
+		"notation": "L_{ef}",
+		"unicode": "L_ef",
+		"default": "",
+		"unit": "mm",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"Ln": {
+		"id": "Ln",
+		"name": "Clear Span",
+		"description": "Length of clear span in the direction in which moments are being determined, measured face-to-face of supporting beams, columns or walls, or for a cantilever, the clear projection",
+		"notation": "L_n",
+		"unicode": "L_n",
+		"default": 3000,
+		"unit": "mm",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"Mo": {
+		"id": "Mo",
+		"name": "Total Static Moment",
+		"description": "Total static moment in a span (see Clause 6.10.4.2); or decompression moment (see Clause 8.2.7.2)",
+		"notation": "M_o",
+		"unicode": "M_o",
+		"default": "",
+		"unit": "",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"Mstar": {
+		"id": "Mstar",
+		"name": "Moment Design Capacity",
+		"description": "Design bending moment at a cross-section",
+		"notation": "M^*",
+		"unicode": "M*",
+		"default": "",
+		"unit": "kN\u22c5m",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"Mu": {
+		"id": "Mu",
+		"name": "Moment Ultimate Strength - When combined with axial load",
+		"description": "Ultimate strength in bending at a cross-section of an eccentrically loaded compressive member",
+		"notation": "M_u",
+		"unicode": "M_u",
+		"default": "",
+		"unit": "",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"Mub": {
+		"id": "Mub",
+		"name": "Moment Ultimate Strength - When balanced failure occurs",
+		"description": "Particular ultimate strength in bending when k_uo = 0.003/(0.003 + f_sy / E_s) (ie. Balanced failure)",
+		"notation": "M_{ub}",
+		"unicode": "M_ub",
+		"default": "",
+		"unit": "",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"Muo": {
+		"id": "Muo",
+		"name": "Ultimate Moment Strength",
+		"description": "Ultimate strength in bending, without axial force, at a cross-section",
+		"notation": "M_{uo}",
+		"unicode": "M_ou",
+		"default": "",
+		"unit": "kN\u22c5m",
+		"related": [
+			"Muomin"
+		],
+		"docs": "",
+		"coderef": []
+	},
+	"Muomin": {
+		"id": "Muomin",
+		"name": "Minimum Ultimate Moment Strength",
+		"description": "Minimum required strength in bending at a critical cross-section (see Clause 8.1.6.1)",
+		"notation": "(M_{uo})_{min}",
+		"unicode": "M_ou_min",
+		"default": "",
+		"unit": "kN\u22c5m",
+		"related": [
+			"Ast",
+			"Muo",
+			"Z"
+		],
+		"docs": "",
+		"coderef": []
+	},
+	"phi": {
+		"id": "phi",
+		"name": "Capacity reduction factor",
+		"description": "Capacity reduction factor for design using linear elastic analysis (see Clause 2.2.2)",
+		"notation": "\\Phi",
+		"unicode": "\u03a6",
+		"default": "",
+		"unit": "",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"reoclass": {
+		"id": "reoclass",
+		"name": "Reinforcement Ductility Class",
+		"description": "AS/NZS 4671 Ductility Class: (L)ow, (N)ormal or (E)arthquake.",
+		"notation": "",
+		"unicode": "",
+		"default": "",
+		"unit": "",
+		"related": [],
+		"docs": "",
+		"coderef": [
+			{
+				"ref": "AS/NZS 4671:2001 (Preface)",
+				"data": "[There are] .. three ductility classes. These are distinguished in requirements by the letters \u2018L\u2019 (low), \u2018N\u2019 (normal) and \u2018E\u2019 (earthquake), placed immediately after the strength-grade number, corresponding with different minimum values for uniform elongation and maximum stress to yield stress ratio."
+			},
+			{
+				"ref": "AS/NZS 4671:2001 (Foreword)",
+				"data": "500E steels are unlikely to be used in Australia, it being considered that Australia's generally low seismicity can be adequately accounted for by using Normal (N) class steels."
+			},
+			{
+				"ref": "AS/NZS 4671:2001 (5.2)",
+				"data": "Shape is designated by the letters, R, D, or I, representing plain (Round), Deformed ribbed, or deformed Indented, surfaces respectively."
+			},
+			{
+				"ref": "AS/NZS 4671:2001 (5.3)",
+				"data": "The standard grades of reinforcing steels are 250N, 300E, 500L, 500N, 500E."
+			}
+		]
+	},
+	"rhoc": {
+		"id": "rhoc",
+		"name": "Concrete Density",
+		"description": "Density of concrete, in kilograms per cubic metre (kg/m3), determined in accordance with Clause 3.1.3",
+		"notation": "\\rho_c",
+		"unicode": "\u03c1_c",
+		"default": 2400,
+		"unit": "kg/m^3",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"sigmast": {
+		"id": "sigmast",
+		"name": "Tensile steel stress",
+		"description": "Tensile stress in reinforcement (see Clause 13.1.2.4)",
+		"notation": "\\sigma_{st}",
+		"unicode": "\u03c3_st",
+		"default": "",
+		"unit": "",
+		"related": [],
+		"docs": "",
+		"coderef": []
+	},
+	"Ts": {
+		"id": "Ts",
+		"name": "Force in tensile steel",
+		"description": "Force developed in the portion of tendons which are under tension. Does not include tendons less than half the diameter of the largest tendon.",
+		"notation": "T_s",
+		"unicode": "T_s",
+		"default": "",
+		"unit": "kN",
+		"related": [
+			"Cs",
+			"Cc",
+			"Ast"
+		],
+		"docs": "<p>Shown below in red in the image below:</p>\n<img src=\"img/rectangular_stress_block_forces.png\" alt=\"// TODO: add image here.\"></img>",
+		"coderef": []
+	},
+	"Z": {
+		"id": "Z",
+		"name": "Section modulus",
+		"description": "Elastic section modulus of the uncracked cross-section, referred to the extreme fibre at which flexural cracking occurs (see Clause 8.1.6.1)",
+		"notation": "Z",
+		"unicode": "Z",
+		"default": "",
+		"unit": "mm\u00b3",
+		"related": [
+			"I",
+			"Muomin"
+		],
+		"docs": "<p>For a plain rectangular section:</p>\n<p>\n    \n    $$\n        Z  = I/\\left(\\frac{D}{2}\\right)\n        {} = \\frac{b D^3}{12}\\frac{2}{D}\n        {} = \\frac{b D^2}{6}\n    $$\n\n</p>",
+		"coderef": []
+	},
+	"cover": {
+		"id": "cover",
+		"name": "Cover",
+		"description": "Minimum distance between the outer concrete surfaces and the reinforcing bars.",
+		"notation": "",
+		"unicode": "",
+		"default": "",
+		"unit": "mm",
+		"related": [
+			"fc",
+			"eclass",
+			"dfitments"
+		],
+		"docs": "<img src=\"img/cover.png\" />",
+		"coderef": []
+	},
+	"Es": {
+		"id": "Es",
+		"name": "Steel modulus of elasticity",
+		"description": "Young's modulus of elasticity of reinforcement steel.",
+		"notation": "E_s",
+		"unicode": "E_s",
+		"default": 200000,
+		"unit": "MPa",
+		"related": [],
+		"docs": "",
+		"coderef": [
+			{
+				"ref": "AS3600 3.2.2",
+				"data": "E<sub>s</sub> can be determined by test or taken to be 200,000MPa (= 200GPa)"
+			}
+		]
+	}
+}

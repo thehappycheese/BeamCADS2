@@ -1,0 +1,20 @@
+
+=== Ductility Class ===
+
+AS/NZS 4671:2001 (Preface): The need to provide reinforcement with ductility appropriate to earthquake-resistant
+concrete structures, coupled with recent investigations into the structural consequences of
+the relatively low ductility of cold-worked reinforcement, has led to the introduction of
+three ductility classes. These are distinguished in requirements by the letters ‘L’ (low), ‘N’
+(normal) and ‘E’ (earthquake), placed immediately after the strength-grade number,
+corresponding with different minimum values for uniform elongation and maximum stress
+to yield stress ratio.
+
+AS/NZS 4671:2001 (Foreword): 500E steels are unlikely to be used in Australia, it being considered that Australia's
+generally low seismicity can be adequately accounted for by using Normal (N) class steels.
+
+AS/NZS 4671:2001 (5.2): Shape is designated by the letters, R, D, or I, representing plain (Round), Deformed ribbed, or
+deformed Indented, surfaces respectively.
+
+
+AS/NZS 4671:2001 (5.3) Standard grades
+The standard grades of reinforcing steels are 250N, 300E, 500L, 500N, 500E.

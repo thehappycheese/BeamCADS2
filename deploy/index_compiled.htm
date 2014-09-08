@@ -1,0 +1,3848 @@
+
+
+
+<!--#########		 Crawling:.\index.htm		#########-->
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="x-ua-compatible" content="IE=Edge"/>
+<link rel="stylesheet" href="style/index.css" type="text/css"/>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+extensions: ["tex2jax.js"],
+jax: ["input/TeX","output/HTML-CSS"],
+tex2jax: {inlineMath: [["$$","$$"],["$$$","$$$"]]},
+messageStyle: "none",
+skipStartupTypeset: true,
+menuSettings: {
+//context: "Browser"
+},
+Tex:{
+extensions: ["color.js"]
+}
+});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!---->
+<title>BeamCalc</title>
+</head>
+<body>
+<div id="secondarycol">
+<div id="apptitlebox" class="bmpblock">
+<!--<h1>BeamCalc</h1>-->
+<a href="img/extended_info_sheet.pdf" download="InfoSheet.pdf">Click here to download extended information sheet / and ethical approval</a>
+</div>
+<div id="protips" class="protip">
+<div class="tips"></div>
+<div class="feedback"></div>
+</div>
+<div id="varinfodiv" class="bmpblock" >
+<!-- 
+HELP INFO GOES HERE
+-->
+</div>
+</div>
+<div id="maincol">	
+<div id="invardiv" class="bmpblock">
+<div style="width:100%;">
+<h2>General Variables</h2>
+</div>
+<div id="invardiv-content">
+<!--
+Variable inputs go here!
+-->
+</div>
+</div>
+<div id="reoinputdiv" class="bmpblock">
+<div style="width:100%;">
+<h2>Reinforcement Information</h2>
+</div>
+<div id="reoinputdiv-content">
+<table class="reotable" style="">
+<thead>
+<tr style="font-family:sans-serif;">
+<td style="width:4em;" data-tooltip="Number used to refer to a layer of reinforcement.">
+Layer<br>Number
+</td>
+<td style="width:5em;border-left:none;">Enabled<br>&nbsp;</td>
+<td style="width:3em;">Bars<br>&nbsp;</td>
+<td style="width:30px;border-left:none;"></td>
+<td style="width:6em;">Top/Bottom<br>Position</td>
+<td style="min-width:3em;">Gap<br>(mm)</td>
+<td style="min-width:3em;">Area<br>(mm&sup2;)</td>
+<td style="min-width:3em;">Depth<br>(mm)</td>
+</tr>
+</thead>
+<tbody id="reorows">
+<!--
+REO INPUT CONTROLS HERE
+-->
+</tbody>
+<tfoot>
+<tr>
+<td colspan=6 style="text-align:right;">Sum of Areas:</td>
+<td id="reosumarea" style="border-top:2px solid black;border-bottom:2px solid black;">TODO</td>
+<td></td>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+<div id="crosssectiondiv" class="bmpblock" style="">
+<h2>Cross Section</h2>
+<canvas width="450" height="400" id="crosssectioncanvas" >
+There has been some error! A beam cross section should show up here!
+</canvas>
+<br/>
+<label for="bananaforscalecheck" onclick="b.drawSection(cs_ctx);" data-tooltip="A banana is a poor measure of scale. Please think about how big the real beam is.">
+<input type="checkbox" id="bananaforscalecheck"/> Show Banana For Scale.
+</label>
+<img id="bananascale" src="img/scale.png" style="display:none;"/>
+<p>Note that greyed out bars are shown for crack control. Not included in strength calcs.</p>
+</div>
+<div style="flex: 0 0 100%;"></div>
+<div id="calcdiv" style="" class="bmpblock">
+<div style="width:100%;">
+<h2>Calculations</h2>
+</div>
+<div id="calcdiv-content">
+<canvas style="margin-top:10px;margin-bottom:10px;" class="dncanvas" width="480" height="300">Canvas not shown</canvas>
+</div>
+</div>
+</div>
+</body>
+<script>
+
+
+
+// #########		 Crawling:.\js\main.js		#########
+
+
+
+// #########		 Crawling:.\js\function.dim.js		#########
+
+
+
+// #########		 Crawling:.\js\Vector.js		#########
+function Vector(x,y){
+this.x = x || 0;
+this.y = y || 0;
+this.set = function(x,y){
+this.x = x;
+this.y = y;
+return this;
+}.bind(this);
+this.fromVector = function(v){
+this.x = v.x;
+this.y = v.y;
+return this;
+}.bind(this);
+this.fromPoints = function(a,b){
+this.x = b.x-a.x;
+this.y = b.y-a.y;
+return this;
+}
+this.fromAngLen = function(angle,length){
+this.x = Math.cos(angle)*length;
+this.y = Math.sin(angle)*length;
+return this;
+}.bind(this);
+this.copy = function(){
+return new Vector(this.x,this.y);
+}.bind(this);
+this.duplicate = this.copy;
+this.plus = function(v){
+this.x+=v.x;
+this.y+=v.y;
+return this;
+}.bind(this);
+this.add = this.plus;
+this.plusScalar = function(s){
+this.x+=s;
+this.y+=s;
+return this;
+}.bind(this);
+this.addScalar = this.plusScalar;
+this.minus = function(v){
+this.x-=v.x;
+this.y-=v.y;
+return this;
+}.bind(this);
+this.subtract = this.minus;
+this.minusScalar = function(s){
+this.x-=s;
+this.y-=s;
+return this;
+}.bind(this);
+this.subtractScalar = this.minusScalar;
+this.scalar = function(s){
+this.x*=s;
+this.y*=s;
+return this;
+}.bind(this);
+this.dot = function(v){
+return  this.x*v.x + this.y*v.y;
+}.bind(this);
+this.left = function(){
+var tmpy = this.y;
+this.y = this.x;
+this.x = -tmpy;
+return this;
+}.bind(this);
+this.right = function(){
+var tmpy = this.y;
+this.y = -this.x;
+this.x = tmpy;
+return this;
+}.bind(this);
+this.unit = function(){
+var mag = this.len;
+this.x/=mag;
+this.y/=mag;
+return this;
+}.bind(this);
+Object.defineProperty(this,"lenSquared",{
+get:function(){
+return this.x*this.x + this.y*this.y;
+}.bind(this)
+});
+Object.defineProperty(this,"len",{
+get:function(){
+return Math.sqrt(this.lenSquared);
+}.bind(this)
+});
+Object.defineProperty(this,"ang",{
+get:function(){
+return Math.atan2(this.y,this.x);
+}.bind(this)
+});
+this.toString = function(){
+return "<"+this.x.toFixed(2)+", "+this.y.toFixed(2)+">";
+}.bind(this);
+this.rounded = function(){
+this.x =Math.round(this.x);
+this.y =Math.round(this.y);
+return this;
+}
+this.moveTo = function(ctx){
+ctx.moveTo(this.x,this.y);
+return this;
+}.bind(this);
+this.lineTo = function(ctx){
+ctx.lineTo(this.x,this.y);
+return this;
+}.bind(this);
+}
+
+
+
+
+
+// #########		 Crawling:.\js\CADCanvas.js		#########
+CanvasRenderingContext2D.prototype.moveToV = function(v){
+this.moveTo(v.x,v.y)
+}
+CanvasRenderingContext2D.prototype.lineToV = function(v){
+this.lineTo(v.x,v.y)
+}
+CanvasRenderingContext2D.prototype.arrowv = function(from,to,size){
+this.beginPath();
+this.moveTo(from.x,from.y);
+this.lineTo(to.x,to.y);
+this.stroke();
+var ang = Math.atan2(to.y-from.y,to.x-from.x);
+this.save();
+this.translate(to.x,to.y);
+this.rotate(ang-Math.PI/2);
+this.beginPath();
+this.moveTo(-0.3*size,-1*size);
+this.lineTo( 0, 0  );
+this.lineTo( 0.3*size,-1*size);
+this.stroke();
+this.restore();
+}
+CanvasRenderingContext2D.prototype.arrow = function(fx,fy,tx,ty,size){
+this.beginPath();
+this.moveTo(fx,fy);
+this.lineTo(tx,ty);
+this.stroke();
+var ang = Math.atan2(ty-fy,tx-fx);
+this.save();
+this.translate(tx,ty);
+this.rotate(ang-Math.PI/2);
+this.beginPath();
+this.moveTo(-0.3*size,-1*size);
+this.lineTo( 0, 0  );
+this.lineTo( 0.3*size,-1*size);
+this.stroke();
+this.restore();
+}
+///////////////////////////////////////////////////////////////////
+//		Circle drawing Functions
+///////////////////////////////////////////////////////////////////
+CanvasRenderingContext2D.prototype.circle = function(x,y,radius){
+this.arc(x,y,Math.max(0,radius),0,Math.PI*2);
+}
+CanvasRenderingContext2D.prototype.fillCircle = function(x,y,radius){
+this.beginPath();
+this.circle(x,y,radius);
+this.fill();
+}
+CanvasRenderingContext2D.prototype.strokeCircle = function (x,y,radius) {
+this.beginPath();
+this.circle(x,y,radius);
+this.stroke();
+}
+CanvasRenderingContext2D.prototype.fillStrokeCircle = function(x,y,radius){
+this.beginPath();
+this.circle(x,y,radius);
+this.fill();
+this.stroke();
+}
+////////////////////////////////////////////////////////////////////////////////////////
+//		SHARP LINE
+////////////////////////////////////////////////////////////////////////////////////////
+CanvasRenderingContext2D.prototype.sharpLine = function (aa, bb, cc, dd, r,g,b,a) {
+var v1 = {x:aa,y:bb};
+var v2 = {x:cc,y:dd};
+var x0 = Math.round(v1.x);
+var y0 = Math.round(v1.y);
+var x1 = Math.round(v2.x);
+var y1 = Math.round(v2.y);
+var imd = this.getImageData(0,0,this.canvas.width,this.canvas.height);
+var index;
+var dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+var dy = Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1; 
+var err = (dx>dy ? dx : -dy)/2;
+//var out = 0;
+while (true) {
+index = 4*x0 + (4*this.canvas.width)*y0;
+imd.data[index+0]	= r;
+imd.data[index+1]	= g;
+imd.data[index+2]	= b;
+imd.data[index+3]	= a;
+//this.setPixel(x0,y0,0,0,0,255);
+if (x0 === x1 && y0 === y1) break;
+var e2 = err;
+if (e2 > -dx) { err -= dy; x0 += sx; }
+if (e2 < dy) { err += dx; y0 += sy; }
+}
+//console.log(out);
+this.putImageData(imd,0,0);
+}
+CanvasRenderingContext2D.prototype.sharpLineV = function(v1,v2,r,g,b,a){
+this.sharpLine(v1.x,v1.y,v2.x,v2.y,r,g,b,a);
+}
+////////////////////////////////////////////////////////////////////////////////////////
+//		SET PIXEL
+////////////////////////////////////////////////////////////////////////////////////////
+CanvasRenderingContext2D.prototype.setPixel = function (x,y, r,g,b,a) {
+var imd = this.getImageData(0,0,this.canvas.width,this.canvas.height);
+var index = 4*x + (4*this.canvas.width)*y;
+imd.data[index+0]	= r;
+imd.data[index+1]	= g;
+imd.data[index+2]	= b;
+imd.data[index+3]	= a;
+this.putImageData(imd,0,0);
+}
+
+
+function dim(ctx,x1,y1,x2,y2,angle,dist,txt){
+var fontpx = 15;
+ctx.save();
+ctx.font = fontpx+"px serif";
+ctx.textBaseline="middle"
+ctx.textAlign="center"
+var metric = ctx.measureText(txt);
+var v1 = new Vector(x1,y1);
+var v2 = new Vector(x2,y2);
+var offset = (new Vector()).fromAngLen(angle,Math.max(10,Math.abs(dist),metric.width/2*Math.cos(angle)+5)*dist/Math.abs(dist));
+var va = v1.copy().add(offset);
+var dimlen = (new Vector()).fromAngLen(angle+Math.PI/2,1).dot(v2.copy().minus(v1))
+var vb = va.copy().add((new Vector()).fromAngLen(angle+Math.PI/2,1).scalar(dimlen));
+var vt = va.copy().add(vb).scalar(0.5);
+if(va.copy().minus(vb).len<30){
+offset = (new Vector()).fromAngLen(angle, Math.max(10, Math.abs(dist))*dist/Math.abs(dist));
+va = v1.copy().add(offset);
+dimlen = (new Vector()).fromAngLen(angle+Math.PI/2,1).dot(v2.copy().minus(v1))
+vb = va.copy().add((new Vector()).fromAngLen(angle+Math.PI/2,1).scalar(dimlen));
+vt = va.copy().add(vb).scalar(0.5).add(offset.unit().scalar(metric.width/2+5));
+}
+var angAtoB = vb.copy().minus(va).ang;
+ctx.lineWidth = 1;
+ctx.strokeStyle = "#555555";
+ctx.fillStyle = "#555555";
+// Draw line bodies
+ctx.beginPath();
+var vc = va.copy().minus(v1).unit().scalar(4).add(v1);
+var vd = va.copy().minus(v1).unit().scalar(4).add(va);
+ctx.moveTo(vc.x,vc.y);
+ctx.lineTo(vd.x,vd.y);
+//ctx.sharpLineV(vc,vd,0,0,0,255);
+var vc = vb.copy().minus(v2).unit().scalar(4).add(v2);
+var vd = vb.copy().minus(v2).unit().scalar(4).add(vb);
+ctx.moveTo(vc.x,vc.y);
+ctx.lineTo(vd.x,vd.y);
+//ctx.sharpLineV(vc,vd,0,0,0,255);
+ctx.moveTo(va.x,va.y);
+ctx.lineTo(vb.x,vb.y);
+//ctx.sharpLineV(va,vb,0,0,0,255);
+ctx.stroke();
+// Arrowhead A
+ctx.save()
+ctx.translate(va.x,va.y);
+ctx.rotate(angAtoB-Math.PI/2);
+ctx.beginPath();
+ctx.moveTo(0,0);
+ctx.lineTo(2,5);
+ctx.lineTo(-2,5);
+ctx.fill();
+//ctx.sharpLine(0,0,2,5,0,0,0,255);
+//ctx.sharpLine(0,0,-2,5,0,0,0,255);
+ctx.restore();
+// Arrowhead B
+ctx.save()
+ctx.translate(vb.x, vb.y);
+ctx.rotate(angAtoB+Math.PI/2);
+ctx.moveTo(0,0);
+ctx.lineTo(2,5);
+ctx.lineTo(-2,5);
+//ctx.sharpLine(0,0,2,5,0,0,0,255);
+//ctx.sharpLine(0,0,-2,5,0,0,0,255);
+ctx.fill();
+ctx.restore();
+if(txt && txt !== "") {
+// Draw text
+ctx.fillStyle = "#000000";
+ctx.clearRect(vt.x-metric.width/2-3,vt.y-fontpx/2-1,metric.width+6,fontpx+4);
+ctx.fillText(txt,vt.x,vt.y);
+}
+ctx.restore();
+}
+
+
+
+
+
+// #########		 Crawling:.\js\Beam.drawSection.js		#########
+
+
+
+// #########		 Crawling:.\js\function.drawFitment.js		#########
+function drawFitment(ctx,x,y,w,h,rad,fitmentlen,scaled_dfitments){
+if(scaled_dfitments>=3){
+ctx.lineCap = "square";
+ctx.strokeStyle = "black";
+ctx.lineWidth = Math.ceil(scaled_dfitments);
+do_draw();
+ctx.lineCap = "square";
+ctx.strokeStyle = "white";
+ctx.lineWidth = Math.ceil(scaled_dfitments)-2;
+do_draw();
+}else{
+ctx.lineCap = "square";
+ctx.strokeStyle = "black";
+ctx.lineWidth = scaled_dfitments;
+do_draw();
+}
+function do_draw(){
+ctx.beginPath();
+ctx.moveTo(x+w-rad-rad/Math.SQRT2-fitmentlen,y+rad-rad/Math.SQRT2+fitmentlen);
+ctx.arc(x+w-rad,y+rad, rad, Math.PI*1.5-Math.PI/4, Math.PI*2);
+ctx.moveTo(x+w,y+h-rad);
+ctx.lineTo(x+w,y+rad);
+ctx.arc(x+w-rad,y+h-rad,rad,0,Math.PI/2)
+ctx.lineTo(x+w-rad*3,y+h)
+ctx.moveTo(x+w-rad,y+h);
+ctx.lineTo(x+rad,y+h);
+ctx.arc(x+rad,y+h-rad,rad,Math.PI/2,Math.PI)
+ctx.moveTo(x,y+h-rad);
+ctx.lineTo(x,y+rad);
+ctx.arc(x+rad,y+rad,rad,Math.PI,Math.PI*1.5)
+ctx.moveTo(x+rad,y);
+ctx.lineTo(x+w-rad,y);
+ctx.arc(x+w-rad,y+rad, rad, -Math.PI/2, Math.PI/4);
+ctx.lineTo(x+w-rad+rad/Math.SQRT2-fitmentlen,y+rad+rad/Math.SQRT2+fitmentlen);
+ctx.stroke();
+}
+}
+
+
+
+
+
+// #########		 Crawling:.\js\Beam.js		#########
+function Beam(){
+"use strict";
+this.create = function(){
+// #########################################################
+// Misc considerations
+this.eclass 			= "A1";
+this.minbarspacing		= undefined;
+// #########################################################
+// Reinforcement considerations
+this.reo = [
+{number:2, diameter:10, area:156, depth:25+10+10/2		},
+{number:2, diameter:10, area:200, depth:600-25-10-10/2	},
+];
+this.df		= 10;
+// #########################################################
+// Geometric considerations
+this.b		= 300;
+this.D		= 600;
+this.cover	= 25;
+this.Ln		= 3000;
+// #########################################################
+// Material considerations
+this.fc		= 32;
+this.Ec		= undefined;
+this.epsiloncmax = 0.003;// TODO: getcorrect code ref. AS3600 8.1.3??
+this.rhoc	= 2400;
+// AS4671 500MPa Steel && AS3600
+this.fsy = 500;// Steel characteristic yield stress: MPa
+// AS3600 3.2.2 taken to be (or determined by test)
+// TODO: add Es to variable inputs (commit with35mins)
+this.Es = 200000;// Steel Young's modulus of elasticity: MPa
+this.epsilonsy = this.fsy/this.Es; // 0.0025 or there-abouts
+}.bind(this);
+// #############################################################################
+// ### CODE COMPLIANCE CHECKERS HELPER FUNCTIONS ###############################
+// #############################################################################	
+// TODO: is_deep_beam ?
+// #############################################################################
+// ### SERVICEABILITY LIMITS ###################################################
+// #############################################################################	
+// TODO:
+// #############################################################################
+// ### GEOMETRIC HELPER FUNCTIONS ##############################################
+// #############################################################################
+Object.defineProperty(this,"innerWidth",{
+get:function innerWidth(){
+return this.b - 2*(this.cover+this.df);
+}.bind(this)}
+);
+this.get_tension_reo = function(){
+console.warn("check this function before use")
+var result = [];
+var dn = this.dn ;
+for(var i = 0; i < this.reo.length;i++){
+if(this.layer_strain_from_layer_dn(this.reo[i], dn)>0){
+result.push(this.reo[i]);
+}
+}
+return result;
+}.bind(this);
+this.get_compression_reo = function(){
+console.warn("check this function before use")
+var result = [];
+var dn = this.dn ;
+for(var i = 0; i < this.reo.length;i++){
+if(this.layer_strain_from_layer_dn(this.reo[i], dn)<0){
+result.push(this.reo[i]);
+}
+}
+return result;
+}.bind(this);
+// #############################################################################
+// ### HIGH LEVEL CAPACITY FUNCTIONS ###########################################
+// #############################################################################
+// TODO: WHY IS THIS WRONG:(It is very concerning!)
+Object.defineProperty(this,"MuoWRONG",{
+get:function Muo(){
+var dn		= this.dn;
+var cc		= this.Cc_from_dn(dn);
+var ccd		= this.Cc_centroid_depth_from_dn(dn);
+var ts		= this.Ts_from_dn(dn);
+var tsd		= this.Ts_centroid_depth_from_dn(dn);
+var cs		= this.Cs_from_dn(dn);
+var csd		= this.Cs_centroid_depth_from_dn(dn);
+return (cc*ccd + ts*tsd + (cs*csd || 0)) / 1000; //kNm
+}.bind(this)}
+);
+Object.defineProperty(this,"Muo",{
+get:function Muo(){
+var dn		= this.dn;
+var result = this.Cc_from_dn(dn)*this.Cc_centroid_depth_from_dn(dn);
+for(var i = 0;i<this.reo.length;i++){
+result += this.layer_force_from_layer_dn(this.reo[i],dn) * this.reo[i].depth;
+}
+return result / 1000; //kNm
+}.bind(this)}
+);
+Object.defineProperty(this,"kuo",{
+get:function kuo(){
+return this.dn/this.d0; // ratio
+}.bind(this)}
+);
+Object.defineProperty(this,"ku",{
+get:function kuo(){
+var dn = this.dn;
+return dn/this.Ts_centroid_depth_from_dn(dn); // ratio
+}.bind(this)}
+);
+Object.defineProperty(this,"phi",{
+get:function phi(){
+// TODO - FOR N CLASS MEMBERS ONLY!
+return Math.max(0.6,Math.min(0.8,1.19-13/12*this.kuo)); // ratio
+}.bind(this)}
+);
+Object.defineProperty(this,"phiMuo",{
+get:function phiMuo(){
+// TODO - FOR N CLASS MEMBERS ONLY!
+return this.phi*this.Muo; // ratio
+}.bind(this)}
+);
+Object.defineProperty(this,"d0",{
+get:function d0(){
+var d0 = -Infinity;
+for(var i = 0;i<this.reo.length;i++){
+if(this.reo[i].depth>d0){
+d0=this.reo[i].depth;
+}
+}
+return d0; //mm
+}.bind(this)}
+);
+// AS3600 8.1.6.1(1)
+Object.defineProperty(this,"Muo_min",{
+get:function Muo_min(){
+// no prestress only.
+return 1.2*this.Ze*this.fctf/1000000; //mm^3*MPa => Nmm /1000/1000 => kNm
+}.bind(this)}
+);
+// AS3600 8.1.6.1(2)
+Object.defineProperty(this,"Muo_min_Ast_min",{
+get:function(){
+// rect sections only
+// TODO: fix this probalem:
+//console.warn("Check this function before use. 'd' may be wrong here. Using Ts_centroid_depth instead");
+return 0.2*Math.pow(  this.D/this.Ts_centroid_depth   ,2)*this.fctf/this.fsy*this.b*this.Ts_centroid_depth;
+}.bind(this)}
+);
+// TODO: create a proper getter for d, ku and kuo
+Object.defineProperty(this,"dn",{
+get:function(){
+// TODO: make a beam flag to determine whether compression steel is considered in this calculation.
+// TODO: make a check to see that reo that is too small is never fed into this beam calculator
+var dn;
+var top = this.D;
+var bot = 0;
+var diff;
+var cnt = 0;
+do{
+dn = (top+bot)/2;
+diff = this.Ts_from_dn(dn)+this.Cs_from_dn(dn)+this.Cc_from_dn(dn);
+if(diff>0){
+bot = dn;
+}else{
+top = dn;
+}
+cnt++
+}while(Math.abs(diff) > 0.05 && cnt<50);
+return dn;
+}.bind(this)
+});
+// #############################################################################
+// ### GET TOTAL FORCES ########################################################
+// #############################################################################
+Object.defineProperty(this,"Ts",{get:function(){
+return this.Ts_from_dn(this.dn);
+}.bind(this)});
+Object.defineProperty(this,"Cs",{get:function(){
+return this.Cs_from_dn(this.dn);
+}.bind(this)});
+Object.defineProperty(this,"Cc",{get:function(){
+return this.Cc_from_dn(this.dn);
+}.bind(this)});
+this.Ts_from_dn = function(dn){
+return this.Fs_from_dn_tension(dn,true);
+}.bind(this);
+this.Cs_from_dn = function(dn){
+return this.Fs_from_dn_tension(dn,false);
+}.bind(this);
+this.Cc_from_dn = function(dn){
+return -(this.b*dn*this.gamma) * (this.fc*this.alpha2)/1000; // kN
+}.bind(this);
+this.Fs_from_dn_tension = function(dn, returntension){
+var result = 0;
+var epsilonsi;
+for(var i = 0;i<this.reo.length;i++){
+// First get strain in the steel layer according to similar triangles:
+epsilonsi = this.epsiloncmax/dn*(this.reo[i].depth - dn);
+// Limit the strain to a range of -0.0025 to 0.0025
+if(returntension){
+epsilonsi = Math.max(0, Math.min(epsilonsi, this.epsilonsy));
+}else{
+epsilonsi = Math.max(-this.epsilonsy, Math.min(epsilonsi, 0));
+}
+result += this.reo[i].area * this.Es * epsilonsi/1000; // kN
+}
+return result;
+}.bind(this);
+// #############################################################################
+// ### GET FORCE CENTROIDS #####################################################
+// #############################################################################
+// TODO: Which layers of steel should be disregarded? Surely steel 'close' to the centroid should be left out.
+Object.defineProperty(this,"Ts_centroid_depth",{get:function(){
+return this.Ts_centroid_depth_from_dn(this.dn);
+}.bind(this)});
+Object.defineProperty(this,"d",{get:function(){
+return this.Ts_centroid_depth_from_dn(this.dn);
+}.bind(this)});
+Object.defineProperty(this,"Cs_centroid_depth",{get:function(){
+return this.Cs_centroid_depth_from_dn(this.dn);
+}.bind(this)});
+Object.defineProperty(this,"Cc_centroid_depth",{get:function(){
+return this.Cc_centroid_depth_from_dn(this.dn)
+}.bind(this)});
+this.Ts_centroid_depth_from_dn = function(dn){
+return this.Fs_centroid_from_dn_tension(dn, true);
+}.bind(this);
+this.Cs_centroid_depth_from_dn = function(dn){
+return this.Fs_centroid_from_dn_tension(dn, false);
+}.bind(this);
+this.Cc_centroid_depth_from_dn = function(dn){
+return this.gamma * dn / 2;
+}.bind(this);
+this.Fs_centroid_from_dn_tension = function(dn, returntension){
+var epsilonsi;
+var sum_area = 0;
+var sum_area_times_depth = 0;
+for(var i = 0;i<this.reo.length;i++){
+// First get strain in the steel layer according to similar triangles:
+epsilonsi = this.layer_strain_from_layer_dn(this.reo[i], dn);
+// Then depending on if we are looking for tension or compression steel, get weighted average depth
+if(  (returntension && epsilonsi>0)  ||  (!returntension && epsilonsi<0)  ){
+sum_area += this.reo[i].area;
+sum_area_times_depth += this.reo[i].area * this.reo[i].depth;
+}
+}
+return sum_area_times_depth/sum_area || undefined;
+}.bind(this);
+// #############################################################################
+// ### GET INDIVIDUAL STEEL FORCES #############################################
+// #############################################################################
+this.strain_from_d_dn = function(d,dn){
+// First get strain at specified depth according to similar triangles:
+var epsilonsi = this.epsiloncmax/dn*(d - dn);
+return epsilonsi
+}.bind(this);
+this.layer_strain_from_layer_dn = function(layer,dn,uncapped){
+// First get strain in the steel layer according to similar triangles:
+var epsilonsi = this.strain_from_d_dn(layer.depth,dn);
+// Limit the strain to a range of -0.0025 to 0.0025
+// (The stress does not increase after yielding at fsy)
+if(!uncapped){
+epsilonsi = Math.max(-this.epsilonsy, Math.min(epsilonsi, this.epsilonsy));
+}
+return epsilonsi
+}.bind(this);
+this.layer_force_from_layer_dn = function(layer,dn){
+var layer_strain = this.layer_strain_from_layer_dn(layer,dn,false);
+return layer.area * this.Es * layer_strain / 1000; // kN
+}.bind(this);
+this.layer_force_from_layer_strain = function(layer,layer_strain){
+return layer.area * this.Es * Math.max(-this.epsilonsy,Math.min(this.epsilonsy,layer_strain))/1000; // kN
+}.bind(this);
+this.layer_yielded_from_layer_dn = function(layer,dn){
+var layer_strain = this.layer_strain_from_layer_dn(layer, dn);
+return layer_strain<=-0.0025 || layer_strain>=0.0025;
+}.bind(this);
+// #############################################################################
+// ### GET STEEL AREAS #########################################################
+// #############################################################################
+Object.defineProperty(this,"As",{get:function(){
+var sum = 0;
+for(i = 0;i<this.reo.length;i++){
+sum += this.reo[i].area;
+}
+return sum;
+}.bind(this)});
+Object.defineProperty(this,"Ast",{get:function(){
+return this.Ast_from_dn(this.dn);
+}.bind(this)});
+Object.defineProperty(this,"Asc",{get:function(){
+return this.Asc_from_dn(this.dn);
+}.bind(this)});
+Object.defineProperty(this,"Acc",{get:function(){
+return this.gamma*this.dn*this.b;
+}.bind(this)});
+this.Ast_from_dn = function(dn){
+return this.As_from_dn_tension(dn,true);
+}.bind(this);
+this.Asc_from_dn = function(dn){
+return this.As_from_dn_tension(dn,false);
+}.bind(this);
+this.As_from_dn_tension = function(dn, returntension){
+var epsilonsi;
+var sum_area = 0;
+for(var i = 0;i<this.reo.length;i++){
+// First get strain in the steel layer according to similar triangles:
+epsilonsi = this.epsiloncmax/dn*(this.reo[i].depth - dn);
+// Then depending on if we are looking for tension or compression steel, get weighted average depth
+if(  (returntension && epsilonsi>0)  ||  (!returntension && epsilonsi<0)  ){
+sum_area += this.reo[i].area;
+}
+}
+return sum_area || undefined;
+}.bind(this);
+// ########################################################################
+// #### MISC COEFICIENTS ##################################################
+// ########################################################################
+Object.defineProperty(this,"gamma",{get:function(){
+var r1 = 1.05-this.fc*0.007;
+var r2 = Math.max(0.67,Math.min(0.85,r1)) 
+return r2;
+}.bind(this)});
+Object.defineProperty(this,"alpha2",{get:function(){
+var r1 = 1-this.fc*0.003
+var r2 = Math.max(0.67,Math.min(0.85,r1));
+return r2;
+}.bind(this)});
+// TODO: note that this is only when no better info is avaliable.
+// TODO: sort
+Object.defineProperty(this,"fctf",{get:function(){
+return 0.6*Math.sqrt(this.fc);
+}.bind(this)});
+// TODO: Ensure technical correctness.
+Object.defineProperty(this,"k",{get:function(){
+var dn = this.dn;
+var dts = this.Ts_centroid_depth_from_dn(dn); 
+return dn/dts;
+}.bind(this)});
+// ########################################################################
+// #### SECTION PROPERTIES ################################################
+// ########################################################################
+Object.defineProperty(this,"Ze",{get:function(){
+// Rectangular section only
+return this.b*Math.pow(this.D,2)/6;
+}.bind(this)});
+Object.defineProperty(this,"Ixx",{get:function(){
+// Rectangular section only
+return this.b*Math.pow(this.D,3)/12;
+}.bind(this)});
+// STARTOFF: 4:35 14 04 14
+this.toString = function(){
+return JSON.stringify(this).replace(/,/g,",\n");
+}.bind(this);
+Object.defineProperty(this,"Ag",{get:function(){
+// Rectangular section only
+return this.b*this.D;
+}.bind(this)});
+// TODO: sort
+// Reo ratio
+Object.defineProperty(this,"p",{get:function(){
+// rect section only
+return this.Ast/this.b/this.D;
+}.bind(this)});
+// AS3600 8.5.3.1
+Object.defineProperty(this,"beta",{get:function(){
+// rect section only
+return this.Ast/this.b/this.D;
+}.bind(this)});
+this.create();
+/*
+*/
+};
+
+
+
+Beam.prototype.drawSection = function(ctx){
+var drawOptions = {
+draw_dn:false,
+draw_d:false,
+draw_question:true,
+draw_Muo:true
+};
+var b = null;
+var dn = this.dn;
+var d = this.Ts_centroid_depth_from_dn(dn);
+// unpack the canvas
+var canvas = ctx.canvas;
+// Ok so let's establish the space we have to work in
+// We will let HTML define our margin and shit. For here, we are only interested in not hitting the edge of the bmp
+// We need to first position the beam as big as possible in the frame. We are going to align it left
+//	leaving 30px on sides with dimention lines so that they fit comfortably
+var padding_left = 60;
+var padding_top = 40;
+var padding_bottom = 40;
+var padding_right = 150;
+var max_height = canvas.height - (padding_top+padding_bottom);
+var max_width = canvas.width - (padding_left+padding_right);
+var scale = Math.min(max_width/this.b, max_height/this.D);
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.save()
+// befor translation show some extra info for asking questions
+if(drawOptions.draw_question){
+ctx.fillStyle = "grey";
+ctx.font = "15px serif";
+ctx.textBaseline="top"
+ctx.textAlign="right"
+ctx.fillText(
+"Fitment Diameter = "+this.df+" mm",
+canvas.width,
+0
+);
+ctx.fillText(
+"Exposure Class = "+this.eclass+"   ",
+canvas.width,
+20
+);
+ctx.fillText(
+"Concrete Strength = "+this.fc+" MPa",
+canvas.width,
+40
+);
+}
+if(drawOptions.draw_Muo){
+ctx.fillStyle = "red";
+ctx.font = "25px serif";
+ctx.textBaseline="top"
+ctx.textAlign="right"
+ctx.fillText(
+"\u03D5Muo = "+(this.phi*this.Muo).toFixed(0)+" kNm",
+canvas.width,
+70
+);
+}
+ctx.translate(
+padding_left+this.b/2*scale,
+padding_top+this.D/2*scale+((canvas.height-padding_top-padding_bottom)-this.D*scale)/2
+);
+// Draw beam body
+ctx.strokeStyle = "#333333";
+ctx.lineWidth = 2;
+ctx.strokeRect(
+-this.b/2*scale,
+-this.D/2*scale,
+this.b*scale,
+this.D*scale);
+dim(
+ctx,
+-this.b/2*scale, -this.D/2*scale,
+-this.b/2*scale,  this.D/2*scale,
+Math.PI,
+32,
+this.D+" mm"
+);
+dim(
+ctx,
+-this.b/2*scale, -this.D/2*scale,
+this.b/2*scale,  -this.D/2*scale,
+-Math.PI/2,
+20,
+this.b+" mm"
+);
+dim(
+ctx,
+-this.b/2*scale							, this.D/2*scale,
+-this.b/2*scale + this.cover*scale	,  this.D/2*scale,
+Math.PI/2,
+20,
+""
+);
+if(document.querySelector("#bananaforscalecheck") && document.querySelector("#bananaforscalecheck").checked){
+//////// BANANA FOR SCALE ////////////
+var bananascale = 180*scale;
+ctx.drawImage(
+document.querySelector("#bananascale"),
+-bananascale/2,-bananascale/2,
+bananascale,
+bananascale
+);
+}
+////// d_n  /////////////
+if(drawOptions.draw_dn){
+ctx.strokeStyle="#FFAAAA"
+ctx.lineWidth = 2;
+ctx.beginPath()
+ctx.moveTo(
+-this.b/2*scale-30,
+-this.D/2*scale+d*scale
+)
+ctx.lineTo(
+this.b/2*scale+80,
+-this.D/2*scale+d*scale
+)
+ctx.stroke()
+ctx.fillText(
+"d_n",
+this.b/2*scale+80,
+-this.D/2*scale+d*scale
+)
+}
+ctx.fillStyle = "black";
+ctx.font = "15px serif";
+ctx.textBaseline="middle"
+ctx.textAlign="left"
+ctx.fillText(
+"Cover = "+this.cover+" mm",
+-this.b/2*scale + this.cover*scale+3,
+this.D/2*scale + 20
+);
+// AS3600 17.2.3 bend radius
+drawFitment(ctx,
+(-this.b/2 + this.cover + this.df/2)*scale,
+(-this.D/2 + this.cover + this.df/2)*scale,
+(this.b - 2*this.cover - this.df)	*scale,
+(this.D - 2*this.cover - this.df)	*scale,
+(this.df*3/2)*scale,
+30*scale,
+this.df*scale);
+var creo = this.reo.concat([]);
+for(var i = 0;i<creo.length;i++){
+creo[i].index = i;
+}
+creo.sort(function(a,b){
+return a.depth - b.depth;
+})
+// Draw reo
+var LABLESPACING = 15;
+var lastDepth = -Infinity;
+ctx.fillStyle = "black";
+for(var i = 0; i< creo.length; i++){
+var layer = creo[i];
+var spacing = (this.b-(this.cover+this.df)*2 - layer.diameter)/(layer.number-1)
+for(var j = 0; j<layer.number; j++){
+ctx.fillCircle(
+(-this.b/2+this.cover+this.df+layer.diameter/2+j*spacing)	*scale,
+(-this.D/2 + layer.depth)			*scale,
+layer.diameter/2 * scale
+);
+}
+var lableDepth = -this.D/2*scale + layer.depth*scale
+if(lastDepth >= lableDepth-LABLESPACING){
+lableDepth = lastDepth+LABLESPACING;
+}
+lastDepth = lableDepth;
+ctx.font = "15px sans-serif"
+ctx.fillText(
+"Layer "+layer.index+": "+layer.number+"N"+layer.diameter,
+this.b/2*scale+30,
+lableDepth
+)
+//\u00D7 == the multiply symbol
+ctx.strokeStyle = "#AAAAAA";
+ctx.lineWidth = 1;
+ctx.beginPath();
+ctx.moveTo(
+this.b/2*scale+3,
+(-this.D/2 + layer.depth)*scale
+)
+ctx.bezierCurveTo(
+this.b/2*scale+15,
+(-this.D/2 + layer.depth)*scale,
+this.b/2*scale+15,
+lableDepth,
+this.b/2*scale+27,
+lableDepth
+)
+ctx.stroke();
+}
+// construct crack control reo
+//First, we need a way to sort reo by depth since this is not how it is present in the data structure.
+// here we make a copy.
+// TODO this crack reo is a crock of shit.
+// TODO crack controll reo should be more than half the diameter of the largest bar?
+var crackreo = [];
+//console.log(creo)
+if(creo[0].offset === 0  && creo[0].from ==="highest"){
+// Good. A top layer of reinforcement exists
+last_depth = creo[0].depth;
+}else{
+// nope! lets add one!
+// if the beam is particularly wide, do we need crack control reo accross the top? Dunno. lets put it there
+// we will use N10s. It is only symbolic anyways.
+crackreo.push({
+number: Math.floor((this.b-2*this.cover-2*this.df)/(300+10))+2,// TODO: fix this line!!! baaaahhhg
+diameter: 10 ,
+depth:this.cover+this.df+5
+});
+last_depth = crackreo[crackreo.length-1].depth;
+}
+// now we go down from last_depth to the bottom of creo and add missing layers where nessisary
+for(var i = 0; i<creo.length;i++){
+var ddif = creo[i].depth-last_depth;
+if(ddif<300){
+last_depth = creo[i].depth;
+}else{
+var num_spaces = Math.ceil(ddif/300);
+var spacing = ddif/num_spaces;
+for(var j = 0;j<num_spaces-1;j++){
+last_depth += spacing
+crackreo.push({
+number: 2,
+diameter: 10 ,
+depth:last_depth
+});
+}
+}
+}
+// Draw reo
+ctx.fillStyle = "#CCCCCC";
+for(var i = 0; i< crackreo.length; i++){
+var layer = crackreo[i];
+var spacing = (this.b-(this.cover+this.df)*2 - layer.diameter)/(layer.number-1)
+for(var j = 0; j<layer.number; j++){
+ctx.fillCircle(
+(-this.b/2+this.cover+this.df+layer.diameter/2+j*spacing)	*scale,
+(-this.D/2 + layer.depth)			*scale,
+layer.diameter/2 * scale
+);
+}
+}
+ctx.restore()
+return "ended draw normally";
+}
+
+
+
+
+
+// #########		 Crawling:.\js\Beam.drawStressBlock.js		#########
+
+
+
+// #########		 Crawling:.\js\CADCanvas.Patterns.js		#########
+CanvasPatterns = new (function(){
+this.set2x2Hatch = function(ctx, color){
+var canvas = document.createElement("canvas");
+var c = canvas.getContext('2d');
+canvas.width = 2;
+canvas.height = 2;
+c.fillStyle = color;
+c.fillRect(0,0,1,1);
+c.fillRect(0,1,1,1);
+ctx.fillStyle = ctx.createPattern(canvas,"repeat");
+}
+this.setHorizontalLine = function(ctx,color){
+var canvas = document.createElement("canvas");
+var c = canvas.getContext('2d');
+canvas.width = 1;
+canvas.height = 6;
+c.fillStyle = color;
+c.fillRect(0,0,1,1);
+ctx.fillStyle = ctx.createPattern(canvas,"repeat");
+}
+})();
+
+
+
+
+
+// #########		 Crawling:.\js\function.drawArrow.js		#########
+function drawArrow(ctx,fx,fy,tx,ty,s){
+var ix = tx-fx;
+var iy = ty-fy;
+var im = Math.sqrt(ix*ix+iy*iy);
+ix = ix/im*(im-s+1)+fx;
+iy = iy/im*(im-s+1)+fy;
+s=Math.min(s,im/2);
+ctx.beginPath();
+ctx.moveTo(fx,fy);
+ctx.lineTo(ix,iy);
+ctx.stroke();
+// Arrowhead A
+ctx.save()
+ctx.translate(tx,ty);
+ctx.rotate(Math.atan2(ty-fy,tx-fx)+Math.PI/2);
+ctx.beginPath();
+ctx.moveTo(0,0);
+ctx.lineTo(s/2,s);
+ctx.lineTo(-s/2,s);
+ctx.fill();
+ctx.stroke();
+//ctx.sharpLine(0,0,2,5,0,0,0,255);
+//ctx.sharpLine(0,0,-2,5,0,0,0,255);
+ctx.restore();
+}
+
+
+Beam.prototype.drawStressBlock = function(ctx){
+var options = {
+draw_d:false,
+draw_dn:true,
+draw_gammadn:true
+}
+// PREPARE THE CANVAS:
+var canvas = ctx.canvas;
+if (!ctx.setLineDash) {
+console.warn("Your browser isnt able to draw dashed lines :(")
+ctx.setLineDash = function () {}
+}
+ctx.font = "12px serif";
+ctx.textBaseline = "top";
+ctx.textAlign = "left";
+// PREPARE THE LAYOUT AND SCALING
+var padding_left = 2;
+var padding_top = 40;
+var padding_bottom = 30;
+var padding_right = 2;
+var max_height = canvas.height - (padding_top+padding_bottom);
+var max_width = canvas.width - (padding_left+padding_right);
+var scaleX = function(n){
+return n*(s_b/this.b);
+}.bind(this);
+var scaleY = function(n){
+return n*(s_D/this.D);
+}.bind(this);
+// PREPARE SOME CASHED VAIABLES TO PREVENT REPEATED FUNCTION CALLS:
+var dn = this.dn;
+var d = this.Ts_centroid_depth_from_dn(dn)
+var b = null;
+var s_b = 100;// Set the beam width at 100;
+var s_D = Math.max(100,Math.min(max_height,this.D/this.b*s_b));
+var s_dn= scaleY(dn);
+var s_d = scaleY(d);
+// BEING DRAWING:
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.save()
+// TRANSFORM:
+ctx.translate(padding_left,	padding_top);
+// DRAW CROSS SECTION
+// Lable cross section
+ctx.save()
+ctx.textBaseline = "top";
+ctx.textAlign = "left";
+ctx.font = "15px sans-serif";
+ctx.fillStyle = "grey";
+ctx.fillText("CROSS-SECTION",0,-padding_top+2);
+ctx.restore();
+if(options.draw_dn){
+// Draw dn the Neutral axisline and lable:
+ctx.setLineDash([4,4,12,4]);
+ctx.beginPath();
+ctx.strokeStyle = "grey";
+ctx.lineWidth = 1;
+ctx.moveTo(-10,s_dn);
+ctx.lineTo(max_width+10,s_dn)
+ctx.stroke();
+ctx.fillStyle = "grey";
+ctx.fillText("dn = "+dn.toFixed(0)+"mm", s_b+5,s_dn+2);
+}
+if(options.draw_d){
+// Draw d the effective depth line and lable:
+ctx.setLineDash([8,4]);
+ctx.beginPath();
+ctx.strokeStyle = "darkred";
+ctx.lineWidth = 2;
+ctx.moveTo(-10,s_d);
+ctx.lineTo(max_width+10,s_d)
+ctx.stroke();
+ctx.fillStyle = "darkred";
+ctx.fillText("d = "+d.toFixed(0)+"mm", s_b+5,s_d+2);
+}
+ctx.setLineDash([]);
+if(options.draw_gammadn){
+// Draw compressive zone and lable
+CanvasPatterns.set2x2Hatch(ctx,"limegreen");
+ctx.fillRect(0,0,s_b,s_dn*this.gamma);
+ctx.fillStyle = "limegreen";
+ctx.textBaseline = "bottom";
+ctx.fillText("\u0263dn = "+(dn*this.gamma).toFixed(0)+"mm", s_b+5,s_dn*this.gamma-2);
+}
+// draw basic section
+ctx.lineWidth = 2;
+ctx.strokeStyle = "black";
+ctx.strokeRect(0,0,s_b,s_D);
+// draw section with reo bars
+for(var i = 0;i<this.reo.length;i++){
+var layer = this.reo[i];
+var x = s_b*0.1;
+var spacing = s_b*0.8/(layer.number-1);
+var f = this.layer_strain_from_layer_dn(layer, dn);
+if(f>0){
+ctx.fillStyle = "red";
+}else{
+ctx.fillStyle = "blue";
+}
+var rad = Math.max(2,Math.min(scaleX(10),scaleY(10)));
+var sid = rad*1.8;
+for(var j = 0; j<layer.number;j++){
+if(f>0){
+ctx.fillCircle(x+spacing*j,scaleY(layer.depth),rad);
+}else{
+ctx.fillRect(x+spacing*j-sid/2,scaleY(layer.depth)-sid/2,sid,sid);
+}
+}
+}
+////////////////////////////////////////////////////////
+// DRAW THE STRAIN COMPATIBILITY DIAGRAM
+////////////////////////////////////////////////////////
+ctx.translate(200,0);
+// Lable cross section
+ctx.save()
+ctx.textBaseline = "top";
+ctx.textAlign = "center";
+ctx.font = "15px sans-serif";
+ctx.fillStyle = "grey";
+ctx.fillText("STRAIN DIAGRAM",0,-padding_top+2);
+ctx.restore();
+// Establish plot function
+var strain_from_d = function(arg_d,capped){
+if(capped){
+return -Math.min(0.0025,Math.max(-0.0025,this.strain_from_d_dn(arg_d,dn)))/0.0025*60;
+}
+return -this.strain_from_d_dn(arg_d,dn)/0.003*10;
+}.bind(this);
+//console.log(strain_from_d(0),strain_from_d(this.D),strain_from_d(this.D/2));
+if(Math.abs(strain_from_d(this.D))>60){
+var strain_from_d = function(arg_d,capped){
+if(capped){
+return -Math.min(0.0025,Math.max(-0.0025,this.strain_from_d_dn(arg_d,dn)))/0.0025*60;
+}
+var i = this.strain_from_d_dn(arg_d,dn);
+var k = Math.abs(this.strain_from_d_dn(this.D,dn));
+return -i/k*60;
+}.bind(this);
+}
+// plot graph line
+CanvasPatterns.setHorizontalLine(ctx,"#FFC9FF");
+ctx.lineWidth = 1;
+ctx.strokeStyle = "magenta";
+ctx.beginPath();
+ctx.moveTo(0,0);
+ctx.lineTo(strain_from_d(0),0);
+ctx.lineTo(strain_from_d(this.D),s_D);
+ctx.lineTo(0,s_D)
+ctx.fill();
+ctx.stroke();
+// Label concrete strain
+ctx.fillStyle = "magenta";
+ctx.textAlign = "left";
+ctx.textBaseline = "bottom";
+ctx.fillText("\u03B5cmax = 0.003",strain_from_d(0),-2);
+// TODO: Pack this function out a utility file.
+var unicodeToNumSubscript=function(str){
+var result = [];
+var inp = String(str).split("")
+var offset = ("\u2080").charCodeAt(0)-("0").charCodeAt(0);
+while(inp.length>0){
+result.push(
+String.fromCharCode(inp.shift().charCodeAt(0)+offset)
+);
+}
+return result.join('')
+}
+// Draw/label reo strains
+for(var i = 0;i<this.reo.length;i++){
+var layer= this.reo[i];
+var strain = this.layer_strain_from_layer_dn(layer,dn,true);
+if(strain>0){
+ctx.strokeStyle="red";
+ctx.fillStyle="red";
+}else{
+ctx.strokeStyle="blue";
+ctx.fillStyle="blue";
+}
+ctx.lineWidth=2;
+ctx.beginPath();
+ctx.moveTo(0,scaleY(layer.depth));
+ctx.lineTo(strain_from_d(layer.depth),scaleY(layer.depth));
+ctx.stroke();
+ctx.textAlign = "left";
+ctx.textBaseline = "middle";
+ctx.fillText("\u03B5s"+i+" = "+strain.toFixed(4)+((Math.abs(strain)>0.0025)?" yield":" elast"),10,scaleY(layer.depth));
+}
+// Draw origin line
+ctx.lineWidth = 2;
+ctx.strokeStyle = "black";
+ctx.beginPath();
+ctx.moveTo(0,0);
+ctx.lineTo(0,s_D);
+ctx.stroke();
+////////////////////////////////////////////////////////
+// DRAW THE FORCE DIAGRAM
+////////////////////////////////////////////////////////
+ctx.translate(180,0);
+// Lable cross section
+ctx.save()
+ctx.textBaseline = "top";
+ctx.textAlign = "center";
+ctx.font = "15px sans-serif";
+ctx.fillStyle = "grey";
+ctx.fillText("FORCE DIAGRAM",0,-padding_top+2);
+ctx.restore();
+// Draw the green square
+CanvasPatterns.set2x2Hatch(ctx,"limegreen");
+ctx.lineWidth = 1;
+ctx.strokeStyle = "limegreen";
+ctx.fillRect(0,0,50,s_dn*this.gamma);
+ctx.strokeRect(0,0,50,s_dn*this.gamma);
+ctx.fillStyle = "limegreen";
+ctx.textAlign = "center";
+ctx.textBaseline = "bottom";
+var Cc = this.Cc_from_dn(dn);
+ctx.fillText("Cc = "+Cc.toFixed(0)+"kN ("+(-this.fc*this.alpha2).toFixed(0)+"MPa)",25,-2);
+// Draw the force vectors
+for(var i = 0;i<this.reo.length;i++){
+var layer= this.reo[i];
+var strain = this.layer_strain_from_layer_dn(layer,dn);
+var force = this.layer_force_from_layer_dn(layer,dn);
+ctx.textBaseline = "middle";
+if(strain>0){
+ctx.strokeStyle="red";
+ctx.fillStyle="red";
+ctx.textAlign = "left";
+ctx.fillText("Ts"+i+" = "+force.toFixed(0)+"kN",3,scaleY(layer.depth));
+}else{
+ctx.strokeStyle="blue";
+ctx.fillStyle="blue";
+ctx.textAlign = "right";
+ctx.fillText("Cs"+i+" = "+force.toFixed(0)+"kN",-3,scaleY(layer.depth));
+}
+ctx.lineWidth=2;
+drawArrow(ctx,
+0,scaleY(layer.depth),
+strain_from_d(layer.depth,true),scaleY(layer.depth),
+6);
+}
+// Draw origin line
+ctx.lineWidth = 2;
+ctx.strokeStyle = "black";
+ctx.beginPath();
+ctx.moveTo(0,0);
+ctx.lineTo(0,s_D);
+ctx.stroke();
+ctx.restore()
+return "ended draw normally";
+}
+
+
+
+
+
+// #########		 Crawling:.\js\ReoInput.js		#########
+
+
+
+// #########		 Crawling:.\js\EventDispatcher.js		#########
+/**
+* This mixin is used to lend primative event management to another class. The maintenance of this class is important!
+* @class EventDispatcher
+* @example
+* 	var ev = new EventDispatcher();
+* 	ev.on("run",function(e){
+* 		console.log(e);
+* 	});
+*/
+function EventDispatcher() {
+"use strict";
+/**
+* This is set automotically when the mixin is instantiated. It is used to prevent repeated instantiation.
+* @property isEventDispatcher
+* @private
+*/
+if(this.__isEventDispatcher == true){
+return;
+}
+this.__isEventDispatcher = true;
+/**
+* Used as an internal dictionary to relate event names to event functions.
+* @property events
+* @type {Object}
+*/
+this.__events = {};
+/**
+* @method on
+* @param EventName {String}
+* @param ListenerFunction {String}
+*/
+this.on = (function (eventName, eventFunction) {
+if (typeof eventName !== "string" || typeof eventFunction !== "function") {
+console.log("Invalid event registration, " + eventName);
+return;
+}
+if (this.__events[eventName] === undefined) {
+this.__events[eventName] = [];
+}
+this.__events[eventName].push(eventFunction);
+}).bind(this);
+/**
+* @method clearListeners
+* @param EventName {String}
+*/
+this.clearListeners = (function (eventName) {
+if (this.__events[eventName] !== undefined) {
+this.__events[eventName] = [];
+}
+}).bind(this);
+/**
+* If the event name is unknown, this method will fail quietly, like a fish.
+* @method dispatch
+* @param EventName {String}
+* @param EventData {Any}
+*/
+this.dispatch = function (eventName, eventData) {
+if (this.__events[eventName] !== undefined) {
+for (var i = 0; i < this.__events[eventName].length; i++) {
+this.__events[eventName][i](eventData);
+}
+} else {
+//fail quietly, like a fish.
+}
+}.bind(this);
+}
+
+
+function ReoInput(arg_manager){
+this.manager = arg_manager;
+EventDispatcher.call(this);
+this.diameters	= [10,	12,		16,		20,		24,		28,		32,		36,		40];
+this.areas		= [78,	113,	201,	314,	452,	616,	804,	1020,	1260];
+this.masses		= [0.632,0.910,1.619,2.528,3.640,4.955,6.471,8.910,10.112];
+this._isFirstRow = false;
+this.create = function(){
+this.body = document.createElement("tr");
+this.body.className = "reoinput";
+this.body.innerHTML = 
+'\
+<td class="layernum">#</td>\
+<td><input type="checkbox" class="enabled"></td>\
+<td style="white-space:nowrap;"><input class="barcode" required value="2N10"/> <span class="offmessage" style="display:none;color:lightgrey;">&#8592; Click here to add a new row</span></td>\
+<td><button class="more" tabindex="-1">+</button><button class="less" tabindex="-1">-</button></td>\
+<td><select class="from"><option value="highest">&#8593; Top</option><option value="lowest" selected>&#8595; Bottom</option></select></td>\
+<td><input type="number" class="offset" value="0" required/></td>\
+\
+<td class="area">--</td>\
+<td class="depth">0</td>\
+';
+this.enabledCheckbox = this.body.querySelector(".enabled");
+this.barcodeInput	= this.body.querySelector(".barcode");
+this.moreButton		= this.body.querySelector(".more");
+this.lessButton		= this.body.querySelector(".less");
+this.areaOutput		= this.body.querySelector(".area");
+this.layerNumberOutput = this.body.querySelector(".layernum");
+this.layerNumberOutput.style.fontWeight = "bold";
+this.layerDepthOutput = this.body.querySelector(".depth");
+this.offsetInput	= this.body.querySelector(".offset");
+this.fromInput		= this.body.querySelector(".from");
+this.selectedCheckbox = this.body.querySelector(".selected");
+this.offMessageOutput = this.body.querySelector(".offmessage");
+this.enabled = false;
+}.bind(this);
+// ##########################################################################################
+// 			BIND EVENTS
+// ##########################################################################################
+this.appendTo = function(dom){
+dom.appendChild(this.body);
+this.enabledCheckbox.addEventListener("change",function(e){
+this.enabled = this.enabledCheckbox.checked;
+this.change();
+}.bind(this));
+this.moreButton.addEventListener("click",function(){
+this.more();
+this.update();
+this.change();
+}.bind(this));
+this.lessButton.addEventListener("click",function(){
+this.less();
+this.update();
+this.change();
+}.bind(this));
+this.offsetInput.addEventListener("change",function(){
+this.update();
+this.change();
+}.bind(this))
+this.offsetInput.addEventListener("input",function(){
+this.update();
+this.change();
+}.bind(this));
+this.fromInput.addEventListener("change",function(){
+this.update();
+this.change();
+}.bind(this))
+// BARCODE CHANGE EVENT LISTENERs
+this.barcodeInput.addEventListener("keydown",function(e){
+if(e.keyCode == 38){	// up button
+this.more();
+e.preventDefault();
+this.update();
+this.change();
+}
+if(e.keyCode == 40){	// down button
+this.less();
+e.preventDefault();
+this.update();
+this.change();
+}
+}.bind(this))
+this.barcodeInput.addEventListener("change",function(){
+this.update();
+this.change();
+}.bind(this));
+this.barcodeInput.addEventListener("input",function(e){
+var val = e.target.value;
+var ss = e.target.selectionStart;
+var se = e.target.selectionEnd;
+var arr = val.split("")
+var flag = false;
+var noN = true;
+for(var i=0;i<arr.length;i++){
+if((/[^0-9nN]/).test(arr[i])){
+arr.splice(i--,1);
+;
+if(i<ss){
+ss--;
+se=ss;
+}
+}
+if(arr[i]=="N"){
+noN = false;
+}
+}
+val = arr.join("");
+val = val.toUpperCase();
+e.target.value =  val;
+e.target.setSelectionRange(ss,se);
+this.update();
+this.change();
+}.bind(this))
+}.bind(this);
+// ##########################################################################################
+// 			GETTER/SETTERS
+// ##########################################################################################
+//				GET/SET ENABLED
+Object.defineProperty(this,"enabled",{
+get:function(){
+return this.enabledCheckbox.checked;
+}.bind(this),
+set:function(newval){
+this.enabledCheckbox.checked = newval;
+this.barcodeInput.disabled		= !newval;
+this.moreButton.disabled		= !newval;
+this.lessButton.disabled		= !newval;
+this.areaOutput.disabled		= !newval;
+this.offsetInput.disabled		= !newval;
+this.fromInput.disabled			= !newval;
+this.update();
+}.bind(this),
+});
+// 			GET/SET barcode
+Object.defineProperty(this,"barcode",{
+get:function(){
+var inp = this.barcodeInput.value;
+//if(inp.match(/^(10|[1-9])(N)(10|12|16|20|24|28|32|36|40)$/)){
+if(inp.match(/^([0-9]+)(N)([0-9]+)$/)){
+return inp;
+}else{
+return "";
+}
+}.bind(this),
+set:function(newval){
+this.barcodeInput.value = newval;
+this.update();
+}.bind(this),
+});
+// 			GET/SET area
+Object.defineProperty(this,"area",{
+get:function(){
+return this.areas[this.diameters.indexOf(this.diameter)]*this.number || undefined;
+}.bind(this)
+});
+// 			GET/SET mass_per_meter
+Object.defineProperty(this,"mass_per_meter",{
+get:function(){
+return this.masses[this.diameters.indexOf(this.diameter)]*this.number || undefined;
+}.bind(this)
+});
+// 			GET/SET diameter
+Object.defineProperty(this,"diameter",{
+get:function(){
+return parseInt(this.barcode.split("N")[1]) || 10;
+}.bind(this),
+set:function(newval){
+if(this.diameters.indexOf(newval)!==-1){
+this.barcode = this.number + "N" + newval;
+}else{
+console.warn("Invalid assignment to reo-input diameter: "+newval);
+}
+}.bind(this)
+});
+// 			GET/SET number
+Object.defineProperty(this,"number",{
+get:function(){
+return parseInt(this.barcode.split("N")[0]) || 2;
+}.bind(this),
+set:function(newval){
+if(typeof newval == "number" && newval!==NaN && newval!==undefined && newval>=2 && newval<100){
+this.barcode = newval + "N" + this.diameter;
+}else{
+console.warn("Invalid assignment to reo-input number: "+newval);
+}
+}.bind(this)
+});
+// 			GET/SET OFFSET
+Object.defineProperty(this,"offset",{
+get:function(){
+return parseInt(this.offsetInput.value) || 0;
+}.bind(this),
+set:function(newval){
+this.offsetInput.value = Math.abs(Math.round(parseFloat(newval)));
+//this.update();
+}.bind(this),
+});
+// 			GET/SET FROM
+Object.defineProperty(this,"from",{
+get:function(){
+return this.fromInput.value;
+}.bind(this),
+set:function(newval){
+this.fromInput.value = newval;
+this.update();
+}.bind(this),
+});
+// 			GET/SET IS AT HIGHEST POSITION
+Object.defineProperty(this,"isAtHighestPosition",{
+get:function(){
+return this.isHighestHighestRow && (this.offset === 0);
+}.bind(this)
+});
+Object.defineProperty(this,"isAtLowestPosition",{
+get:function(){
+return this.isLowestLowestRow && (this.offset === 0);
+}.bind(this)
+});
+Object.defineProperty(this,"isHighestHighestRow",{
+get:function(){
+return this.manager.getHighestHighestRow() === this;
+}.bind(this)
+});
+Object.defineProperty(this,"isLowestLowestRow",{
+get:function(){
+return this.manager.getLowestLowestRow() === this;
+}.bind(this)
+});
+Object.defineProperty(this,"isFirstRow",{
+get:function(){
+return this._isFirstRow;
+}.bind(this),
+set:function(newval){
+this._isFirstRow = newval;
+if(this._isFirstRow){
+this.enabledCheckbox.disabled = true;
+this.offsetInput.disabled = true;
+this.fromInput.disabled = true;
+this.offsetInput.style.visibility = "hidden";
+this.fromInput.style.visibility = "hidden";
+}else{
+this.enabledCheckbox.disabled = false;
+this.offsetInput.disabled = false;
+this.fromInput.disabled = false;
+this.offsetInput.style.visibility = "";
+this.fromInput.style.visibility = "";
+}
+}.bind(this)
+})
+// ##########################################################################################
+// 			UPDATE
+// ##########################################################################################
+this.update = function(){
+if(this.enabled){
+this.body.style.color = "";
+this.areaOutput.innerHTML = this.area;
+this.offsetInput.style.display	= "";
+this.fromInput.style.display	= "";
+this.moreButton.style.display	= "";
+this.lessButton.style.display	= "";
+this.barcodeInput.style.display = "";
+this.offMessageOutput.style.display = "none";
+if(this.isHighestHighestRow){
+if(this.offest!== 0){
+this.offset = 0;
+}
+this.offsetInput.style.display	= "none";
+}
+}else{
+this.areaOutput.innerHTML = "";
+this.body.style.color = "grey";
+this.offsetInput.style.display	= "none";
+this.fromInput.style.display	= "none";
+this.moreButton.style.display	= "none";
+this.lessButton.style.display	= "none";
+this.barcodeInput.style.display	= "none";
+this.offMessageOutput.style.display = "";
+}
+this.update_validity();
+this.dispatch("update",this);
+}.bind(this);
+this.change = function(){
+this.dispatch("change",this);
+}.bind(this);
+this.update_validity = function(){
+var valid = this.getValidity();
+if(valid.error.length>0){
+this.body.style.backgroundColor = "lightyellow";
+this.body.style.color = "red";
+}else{
+this.body.style.backgroundColor = "";
+this.body.style.color = "";
+}
+}.bind(this);
+// ##########################################################################################
+// 			HELPERS
+// ##########################################################################################
+// ##########################################################################################
+// 			MORE AND LESS HELPER FUNCTIONS
+// ##########################################################################################
+this.more = function(){
+var b = parseInt(vin.b.value);
+var D = parseInt(vin.D.value);
+var df = parseInt(vin.df.value);
+var cover = parseInt(vin.cover.value);
+var fitwidth = b-2*cover-2*df;
+var manager = this.manager;
+if(this.isAtLowestPosition || this.isAtHighestPosition){// TODO: or if the row is pressed against the top allow multi bars of comp reo.
+// ASSUME: assume minimum spacing of 20mm between
+// ASSUME: assume maximum spacing of 300mm c-c
+// ASSUME: assume maximum of 10 bars
+this.barcode = this._more_less_barcode(true, 10, 300, 20, fitwidth, this.area) || this.barcode;
+}else{
+// ASSUME: assume maximum of 2 bars
+// ASSUME: assume maximum spacing of Infinity
+this.barcode = this._more_less_barcode(true, 2,  Infinity, 20, fitwidth, this.area) || this.barcode;
+}
+}.bind(this);
+this.less = function(){
+var b = parseInt(vin.b.value);
+var D = parseInt(vin.D.value);
+var df = parseInt(vin.df.value);
+var cover = parseInt(vin.cover.value);
+var fitwidth = b-2*cover-2*df;
+var manager = this.manager;
+if(this.isAtLowestPosition || this.isAtHighestPosition){// TODO: or if the row is pressed against the top allow multi bars of comp reo.
+// ASSUME: assume minimum spacing of 20mm between
+// ASSUME: assume maximum spacing of 300mm c-c
+// ASSUME: assume maximum of 10 bars
+this.barcode = this._more_less_barcode(false, 10, 300, 20, fitwidth, this.area) || this.barcode;
+}else{
+// ASSUME: assume maximum of 2 bars
+// ASSUME: assume maximum spacing of Infinity
+this.barcode = this._more_less_barcode(false, 2,  Infinity, 20, fitwidth, this.area) || this.barcode;
+}
+}.bind(this);
+this._more_less_barcode = function (getmore, maxbar, max_spacing, min_gap, fitwidth, current_area){
+var combs = [];
+var num,dia,diai,minw,maxw;
+for(num = 2; num<=maxbar;num++){
+for(diai=0;diai<this.diameters.length;diai++){
+dia = this.diameters[diai];
+minw = dia*num+(num-1)*min_gap;
+maxw = dia*num+(num-1)*max_spacing;
+if(fitwidth>=minw && fitwidth<=maxw){
+combs.push({number:num, diameter:dia, area:this.areas[diai]*num})
+}
+}
+}
+if(combs.length==0){
+console.log("never was possible combinations error");
+return "2N10";
+}
+combs.sort(function(a,b){
+if(getmore){
+return a.area-b.area;
+}else{
+return b.area-a.area;
+}
+})
+//console.table(combs);
+// go through pairwise and remove all adjacent combos within 50mm^2 of eachother where one has less bars than the other
+var da = 0;
+var dn = 0;
+for(var i = 0;i<combs.length-1;i++){
+da = Math.abs(combs[i].area - combs[i+1].area);
+if(da>50){
+if(combs[i].number<combs[i+1].number){
+combs.splice(i+1,1);
+}else if(combs[i].number>combs[i+1].number){
+combs.splice(i,1);
+i--;
+}
+}
+}
+// go through pairwise and remove all adjacent combos within 100mm^2 of eachother if one has less than or equal to half the number of bars.
+var da = 0;
+var dn = 0;
+for(var i = 0;i<combs.length-1;i++){
+da = Math.abs(combs[i].area - combs[i+1].area);
+if(da>50){
+if(combs[i].number<=combs[i+1].number/2){
+combs.splice(i+1,1);
+}else if(combs[i+1].number<=combs[i].number/2){
+combs.splice(i,1);
+i--;
+}
+}
+}
+//console.log(combs.length);
+for(var i = 0;i<combs.length;i++){
+if(getmore){
+if(combs[i].area>current_area){
+return combs[i].number+"N"+combs[i].diameter;
+}
+}else{
+if(combs[i].area<current_area){
+return combs[i].number+"N"+combs[i].diameter;
+}
+}
+}
+// no suitable combination was found. Return the top combination.
+if(combs.length==0){
+console.log("no possible combinations error");
+return "2N10";
+}
+return combs[combs.length-1].number+"N"+combs[combs.length-1].diameter;
+}.bind(this);// end _more_less_barcode
+this.getValidity = function(){
+var result = {error:[], warning:[], infos:[]};
+if(!this.enabled) return result;
+var rowname = ("Layer "+this.manager.getEnabledRowIndex(this)).bold();
+// Check that this layer isn't near the neutral axis
+if(!this.barcodeInput.value.match(/^[0-9]+N[0-9]+$/)){
+result.error.push(rowname+' incorrect \'Bars\' column. This software uses the shorthand \"<b>2N10</b>\" to indicate 2 <a href="#help_bar_reoclass">normal ductility bars</a> with a diameter of 10mm.');
+}else{
+var number = parseInt(this.barcodeInput.value.split("N")[0]);
+var diameter = parseInt(this.barcodeInput.value.split("N")[1]);
+if(number<2){
+// we should never have less than 2 bars
+result.error.push(rowname+" has less than 2 bars. At least 2 bars in each layer are required to form a symmetrical reo cage for transportation.");
+}else if(!this.isAtHighestPosition && !this.isAtLowestPosition){
+// If this is a "middle" row, then it shouldn't have more than 2 bars!
+if(number > 2){
+result.error.push(rowname+" has bars floating in mid air! This layer should have only 2 bars.")
+}
+}
+if(number>10){
+result.error.push(rowname+" has too many bars (<b>>10</b>). Consider using larger bar diameters instead.");
+}
+if(this.diameters.indexOf(diameter)===-1){
+result.error.push(rowname+" non-standard bar diameter. This software can only function with standard deformed bar diameters: ["+this.diameters.join(", ")+"] mm");
+}
+// lets calculate the spacing between the bars in this layer!
+var b = parseInt(vin.b.value);
+var df = parseInt(vin.df.value);
+var cover = parseInt(vin.cover.value);
+var fitwidth = b-2*cover-2*df;
+var gap = (fitwidth - (number*diameter))/(number-1);
+if(gap<20){
+result.error.push(rowname+" not enough space between bars (<20mm). Use fewer bars so that aggregate can completely surround the bars and and air bubbles can escape.");
+}
+// TODO: get code references for this section
+// verify!
+if(this.isAtHighestPosition || this.isAtLowestPosition){
+if(gap > 300){
+result.error.push(rowname+" has too much space between bars (>300mm) for crack control requirements! Only bars which are \u2265 half the diameter of the largest bar can be counted.")
+}
+}
+}
+// if this is the top or bottom layer, gap can be 0. otherwise gap should be at least 20mm.
+if(this.isAtLowestPosition || this.isAtHighestPosition){
+// do nothing
+}else{
+if(this.offset<20){
+result.error.push(rowname+" is too close to another layer. The <b>'Gap' should be at least 20mm</b> so that aggregate can completely surround the bars and and air bubbles can escape.");
+}
+}
+// Check that this layer's diameter isnt less than half the diameter of the largest bar.
+//var rs = this.manager.getEnabledRows();
+//var largest = -Infinity;
+//for(var i= 0; i <rs.length;i++){
+//	if(rs[i].diameter>largest){
+//		largest = rs[i].diameter;
+//	}
+//}
+//var largeston2 = largest/2;
+//if(this.diameter<largeston2){
+//	result.error.push("Reo Layer "+this.manager.getEnabledRowIndex(this)+": "+"is less than half the diameter of the largest bar. This layer should be excluded from calculations.")
+//}
+return result;
+}.bind(this);
+this.create();
+}
+
+
+
+
+
+// #########		 Crawling:.\js\ReoManager.js		#########
+function ReoManager(arg_body, arg_beam){
+EventDispatcher.call(this);
+this.beam = arg_beam;
+this.body = arg_body;
+this.rows = [];
+this.create = function(){
+var firstrow = this.createReoInput();
+firstrow.isFirstRow = true;
+firstrow.enabled = true;
+this.rows.push(firstrow);
+this.rows.push(this.createReoInput());
+this.rows.push(this.createReoInput());
+this.rows.push(this.createReoInput());
+// TODO: reversed row order. make things independat of row orderish.
+for(var i = this.rows.length - 1;i>=0;i--){
+this.rows[i].appendTo(this.body);
+}
+this.update();
+}.bind(this);
+this.getEnabledRows = function(){
+var result = [];
+for(var i = 0;i<this.rows.length;i++){
+if(this.rows[i].enabled){
+result.push(this.rows[i]);
+}
+}
+return result;
+}.bind(this);
+this.getRowIndex = function(row){
+for(var i=0; i<this.rows.length;i++){
+if(row === this.rows[i]){
+return i;
+}
+}
+return undefined
+}.bind(this);
+this.getEnabledRowIndex = function(row){
+var rs = this.getEnabledRows();
+for(var i=0; i<rs.length;i++){
+if(row === rs[i]){
+return i;
+}
+}
+return undefined
+}.bind(this);
+this.getHighestHighestRow = function(){
+r = this.getEnabledRows();
+for(var i = r.length-1;i>=0;i--){
+if(r[i].from==="highest"){
+return r[i];
+}
+}
+return undefined;
+}.bind(this);
+this.getLowestLowestRow = function(){
+r = this.getEnabledRows();
+for(var i = 0;i<r.length;i++){
+if(r[i].from === "lowest"){
+return r[i];
+}
+}
+return undefined;
+}.bind(this);
+this.getDepthOfRow = function(row){
+// TODO: update
+var D = this.beam.D;
+var df = this.beam.df;
+var cover = this.beam.cover;
+var rs = this.getEnabledRows();
+var br = this.getLowestLowestRow();
+var last_low_depth = D-cover-df;
+var last_high_depth = cover+df;
+// loop bottom to top
+for(var i = 0;i<rs.length;i++){
+if(rs[i].from === "lowest"){
+if(rs[i] === row){
+return last_low_depth - rs[i].offset - rs[i].diameter/2;
+}else{
+last_low_depth -= rs[i].offset + rs[i].diameter;
+}
+}
+}
+// loop top to bottom
+for(var i = rs.length-1; i>=0; i--){
+if(rs[i].from === "highest"){
+if(rs[i] === row){
+return last_high_depth + rs[i].offset + rs[i].diameter/2;
+}else{
+last_high_depth += rs[i].offset + rs[i].diameter;
+}
+}
+}
+throw new Error("Failed to get depth of row.")
+}.bind(this);
+this.createReoInput = function(){
+var nr = new ReoInput(this);
+nr.on("update",this.update);
+nr.on("change",this.change);
+return nr;
+}.bind(this);
+this.change = function(e){
+//console.log("reo-manager change");
+this.dispatch("change",this);
+}.bind(this);
+this.lock_update = false;
+this.update = function(e){
+if(this.lock_update) return;
+this.lock_update = true;
+//console.log("reo-manager update");
+this.sort_rows(); // TODO: does this trigger when offset is changed in a row? prolly not :(
+this.update_renumberRows();
+this.lock_update = false;
+this.dispatch("update",this);
+}.bind(this);
+this.sort_rows = function(){
+var r = this.rows; // Alias for the reoinput objects
+var a, b, ad, bd;
+for(i=0;i<r.length-1;i++){
+a = r[i];
+b = r[i+1];
+// swap when:
+// highest&enabled below an (enabled&lowest or a disabled) OR
+// disabled item below an enabled&lowest
+if(((a.from === "highest" && a.enabled === true) && ((b.from === "lowest" && b.enabled === true) || b.enabled === false))||
+(a.enabled===false && (b.from==="lowest" && b.enabled===true))){
+// dont sort against blanks!
+// didnt work :(
+//if((a.from==="highest" && a.enabled) && (b.from === "lowest" && b.enabled)){ 
+// swap required. only need to swap in this direction to finish
+this.swap_rows(a,b)
+// set i to 0 and restart
+i=0;
+}
+}
+//this.update_renumberRows();
+}.bind(this);
+this.swap_rows = function(a,b){
+var t_offset = a.offset;
+var t_barcode = a.barcode;
+var t_from = a.from;
+var t_enabled = a.enabled;
+var t_isFirstRow = a.isFirstRow;
+a.offset = b.offset;
+a.barcode = b.barcode;
+a.from = b.from;
+a.enabled = b.enabled;
+a.isFirstRow = b.isFirstRow;
+b.offset = t_offset;
+b.barcode = t_barcode;
+b.from = t_from;
+b.enabled = t_enabled;
+b.isFirstRow = t_isFirstRow;
+}.bind(this);
+this.update_renumberRows = function(){
+for(var i=0; i<this.rows.length;i++){
+this.rows[i].layerNumberOutput.innerHTML = "";
+this.rows[i].layerDepthOutput.innerHTML = "";
+this.rows[i].layerDepthOutput.innerHTML = "";
+}
+var rs = this.getEnabledRows();
+for(var i=0; i<rs.length;i++){
+rs[i].layerNumberOutput.innerHTML = i;
+rs[i].layerDepthOutput.innerHTML = this.getDepthOfRow(rs[i]);
+}
+}.bind(this);
+Object.defineProperty(this,"value",{
+get:function(){
+var result = [];
+var rs = this.getEnabledRows(); 
+var rw;
+for(var i = 0;i<rs.length;i++){
+rw = {
+number:		rs[i].number,
+diameter:	rs[i].diameter,
+area:		rs[i].area,
+depth:		this.getDepthOfRow(rs[i]),
+from:		rs[i].from,
+offset:		rs[i].offset,
+}
+result.push(rw);
+}
+return result;
+},
+set:function(newval){
+// TODO: DESERIELIZEEEE :|
+}
+});
+this.create();
+};
+
+
+
+
+
+// #########		 Crawling:.\js\ProTips.js		#########
+function ProTips(arg_body){
+this.body = arg_body;
+this.tips_div = this.body.querySelector(".tips");
+this.feedback_div = this.body.querySelector(".feedback");
+this.tips = [];
+this.add = function(target, tip){
+this.tips.push({target:target, tip:tip});
+target.addEventListener("mouseover",this.over);
+target.addEventListener("mouseout",this.out);
+}.bind(this);
+this.addElemSelector = function(elem,selector,tip){
+var els = elem.querySelectorAll(selector);
+for(var i = 0; i<els.length; i++){
+this.add(els[i],tip);
+}
+}.bind(this);
+this.tip_from_target = function(target){
+for(var i = 0; i<this.tips.length; i++){
+if(this.tips[i].target === target) return this.tips[i].tip;
+}
+return undefined;
+}.bind(this);
+this.over	= function(e){
+this.tips_div.style.color = "black";
+var t = e.target;
+while(this.tip_from_target(t) === undefined && t !== document.body){
+t = t.parentElement;
+}
+this.tips_div.innerHTML = this.tip_from_target(t);
+}.bind(this);
+this.out		= function(e){
+this.tips_div.style.color = "lightgrey";
+this.tips_div.innerHTML = "Roll your mouse over something to get a tooltip here!";
+}.bind(this);
+this.grab = function(elem){
+try{
+var els = elem.querySelectorAll("*");
+}catch(e){
+console.log("protips could not grab from " +elem);
+return; // fail silently
+}
+for(var i = 0;i<els.length;i++){
+if(els[i].getAttribute("data-tooltip")){
+this.add(els[i],els[i].getAttribute("data-tooltip"));
+}
+}
+}.bind(this);
+this.setError=function(error_list,warning_list){
+var out = ""
+if(error_list && error_list.length>0){
+out += '<ul class="errorlist"><li>'+error_list.join("</li><li>")+'</li></ul>';
+}
+if(warning_list && warning_list.length>0){
+out += '<ul class="warninglist"><li>'+warning_list.join("</li><li>")+'</li></ul>';
+}
+this.feedback_div.innerHTML = out;
+if(error_list.length+warning_list.length>0){
+this.feedback_div.style.backgroundColor = "yellow";
+}else{
+this.feedback_div.style.backgroundColor = "";
+}
+}.bind(this);
+this.updateMathJax = function(){
+if(document.body.contains(this.body)){
+try{
+MathJax.Hub.Queue(["Typeset",MathJax.Hub,this.body]);
+}catch(e){
+// Fail silently
+}
+}
+}.bind(this);
+}
+
+
+
+
+
+// #########		 Crawling:.\js\CalcDiv.js		#########
+function CalcDiv(){
+EventDispatcher.call(this);
+this.body;
+this.topdiv;
+this.contentdiv;
+this._collapsed = false;
+this.init = function(){
+this.body = this.body || document.createElement("div");
+this.body.innerHTML = '<div class="CalcDiv">\
+<table class="topdiv">\
+<tr>\
+<td style="width:30px;padding-right:10px;">\
+<button class="minmaxbutton" title="Show workings.">+</button>\
+</td>\
+<td class="titlediv">\
+[Title]\
+</td>\
+</tr>\
+</table>\
+<div class="contentdiv" style="display: none;">\
+<p>[Content]</p>\
+</div>\
+</div>';
+this.topdiv = this.body.querySelector(".topdiv");
+this.minmaxbutton = this.body.querySelector(".minmaxbutton");
+this.titlediv = this.body.querySelector(".titlediv");
+this.contentdiv = this.body.querySelector(".contentdiv");
+this._collapsed = true;
+this.dispatch("init",null);
+}.bind(this);
+this.appendTo = function(dom){
+this.init();
+dom.appendChild(this.body);
+this.topdiv.addEventListener("click",this.toggleCollapse,false);
+this.dispatch("added");
+}.bind(this);
+this.toggleCollapse = function(){
+this.collapsed = !this.collapsed;
+}.bind(this);
+this.updateMathJax = function(){
+MathJax.Hub.Queue(["Typeset",MathJax.Hub,this.body]);
+}.bind(this);
+Object.defineProperty(this,"collapsed",{
+get:function(){
+return this._collapsed;
+}.bind(this),
+set:function(newval){
+this._collapsed = newval;
+this.contentdiv.style.display = (newval)? "none" : "";
+if(newval){
+this.minmaxbutton.innerHTML = "+";
+this.dispatch("hide");
+}else{
+this.minmaxbutton.innerHTML = "-";
+this.dispatch("show");
+}
+}.bind(this)
+})
+Object.defineProperty(this,"title",{
+get:function(){
+return this.titlediv.innerHTML;
+}.bind(this),
+set:function(newval){
+this.titlediv.innerHTML = newval;
+}.bind(this)
+});
+Object.defineProperty(this,"content",{
+get:function(){
+return this.contentdiv.innerHTML;
+}.bind(this),
+set:function(newval){
+this.contentdiv.innerHTML = newval;
+}.bind(this)
+});
+this.addParagraph = function(content){
+var newp = document.createElement("p");
+newp.innerHTML = content;
+this.contentdiv.appendChild(newp);
+}.bind(this);
+this.addSpace = function(){
+var newp = document.createElement("div");
+newp.style.height = "5px";
+this.contentdiv.appendChild(newp);
+}.bind(this);
+this.addElement = function(element){
+this.contentdiv.appendChild(element);
+}.bind(this);
+this.init();
+}
+
+
+
+
+
+// #########		 Crawling:.\js\HelpBar.js		#########
+
+
+
+// #########		 Crawling:.\js\tinyxhr.js		#########
+function tinyxhr(url,cb,method,post,contenttype){
+var requestTimeout,xhr;
+try{ xhr = new XMLHttpRequest(); }catch(e){
+try{ xhr = new ActiveXObject("Msxml2.XMLHTTP"); }catch (e){
+if(console)console.log("tinyxhr: XMLHttpRequest not supported");
+return null;
+}
+}
+requestTimeout = setTimeout(function() {xhr.abort(); cb(new Error("tinyxhr: aborted by a timeout"), "",xhr); }
+, 10000);
+xhr.onreadystatechange = function()
+{
+if (xhr.readyState != 4) return;
+clearTimeout(requestTimeout);
+cb(xhr.status != 200?new Error("tinyxhr: server respnse status is "+xhr.status):false, xhr.responseText,xhr);
+}
+xhr.open(method?method.toUpperCase():"GET", url, true);
+//xhr.withCredentials = true;
+if(!post)
+xhr.send();
+else
+{
+xhr.setRequestHeader('Content-type', contenttype?contenttype:'application/x-www-form-urlencoded');
+xhr.send(post)
+}
+}
+
+
+function HelpBar(arg_host){
+this.host = document.getElementById(arg_host);
+this.data = null;
+this.startload = function(){
+tinyxhr("infos/infos.json",function(err,text,xhr){
+if(err && !text){
+console.log("Failed to load help bar json content");
+throw err;
+}
+this.data = JSON.parse(text)
+this.init()
+}.bind(this));
+// Add a listner or an interval to check for hash change events
+if ("onhashchange" in window) {
+window.addEventListener("hashchange",this.hashChangeListener,false);
+}else {
+this.prevHash = window.location.hash;
+window.setInterval(function () {
+if (window.location.hash != this.prevHash) {
+this.prevHash = window.location.hash;
+this.hashChangeListener(this.prevHash);
+}
+}.bind(this), 100);
+}
+}.bind(this)
+this.init=function(){
+this.buildBar();
+try{
+MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+}catch(e){
+console.log("Failed to typeset help bar",e);
+}
+ttips.grab(this.host);
+}.bind(this);
+this.buildBar = function (){
+var indexdiv = makeDiv("help_bar_index","helpblock");
+this.host.appendChild(indexdiv)
+var items = [];
+// convert object to array for sorting:
+for(var k in this.data){
+items.push(this.data[k]);
+}
+items.sort(function(a,b){
+return a.unicode.localeCompare(b.unicode)
+})
+var indexhtml = "<div><h1>Help Index</h1>";
+for(var i = 0;i<items.length;i++){
+this.host.appendChild(makeHelpBlock(items[i],this.data));
+//indexhtml +='<a href="#help_bar_'+items[i].id+'">$$$'+items[i].notation+'$$$ '+items[i].name+'</a>';
+indexhtml += makeIndexLink(items[i])
+}
+indexhtml +="</div>"
+indexdiv.innerHTML = indexhtml;
+function makeIndexLink(item){
+var html ="";
+if(item.id){
+html+= '<a href="#help_bar_'+item.id+'">';
+}
+html+= '<table class="help_bar_link" data-tooltip="'+item.description+'"><tr>';
+html+= '<td class="c1">$$$'+item.notation+'$$$</td><td class="c2">'+item.name+'</td>';
+html+= "</tr></table>";
+if(item.id){
+html+= "</a>";
+}
+return html;
+}
+function makeHelpBlock(item,data){
+var result = makeDiv("help_bar_"+item.id,"helpblock");
+var html = "";
+html += '<a href="#help_block_index" style="display:block;line-height:40px;height:40px;text-align:center;">Back to Help Index.</a>'
+html += '<h1>'+
+((item.notation)?("$$$"+item.notation+"$$$ "):"")+
+item.name+
+((item.unit)?(" ("+item.unit+")"):"")+
+"</h1>";
+if(item.description){
+html += "<p><b>"+item.description+"</b></p>";
+}
+html += item.docs;
+if(item.coderef.length>0){
+html += '<table class="help_bar_coderef">';
+for(var i = 0;i<item.coderef.length;i++){
+html+='<tr><td class="c1">'+item.coderef[i].ref+'</td><td class="c2">'+item.coderef[i].data+"</td></tr>";
+}
+html+="</table>";
+}
+if(item.related.length>0){
+html += "<h2>Related:</h2>";
+item.related.sort();
+for(var i = 0;i<item.related.length;i++){
+// TRY TO FIND THE RELATED item in this.data
+try{
+// Create a link
+html +=  makeIndexLink(data[item.related[i]]);
+}catch(e){
+// show non-link
+html +=  makeIndexLink({id:"",notation:"",name:item.related[i]});
+}
+}
+}
+result.innerHTML = html;
+result.style.display="none";
+return result;
+}
+function makeDiv(id,classname){
+var result = document.createElement("div");
+result.id = id || "";
+result.className = classname || "";
+return result;
+}
+}.bind(this);
+this.hideAll = function(){
+var els = this.host.children;
+for(var i = 0; i < els.length; i++){
+els[i].style.display = "none";
+}
+}.bind(this);
+this.hashChangeListener = function(e){
+var new_hash = undefined;
+if(typeof e === "string"){
+new_hash = e.split("#")[1];
+}else{
+try{
+new_hash = e.newURL.split("#")[1];
+}catch(e){
+new_hash = window.location.hash.split("#")[1];
+}
+}
+this.hideAll();
+if(new_hash){
+var element_to_make_visible = this.host.querySelector("#"+new_hash);
+if(!element_to_make_visible){
+element_to_make_visible = this.host.querySelector("#help_bar_index");
+}
+element_to_make_visible.style.display = "";
+}else{
+var element_to_make_visible = this.host.querySelector("#help_bar_index");
+element_to_make_visible.style.display = "";
+}
+}.bind(this);
+window.open("#","_self");
+this.startload();
+}
+
+
+
+// Order matters for these ones :(
+
+
+
+// #########		 Crawling:.\js\main.function.outputCalculations.js		#########
+
+
+
+// #########		 Crawling:.\js\calc\calc.js		#########
+
+
+
+// #########		 Crawling:.\js\calc\..\CalcDiv.js		#########
+
+
+
+// #########		 Crawling:.\js\calc\..\EventDispatcher.js		#########
+/**
+* This mixin is used to lend primative event management to another class. The maintenance of this class is important!
+* @class EventDispatcher
+* @example
+* 	var ev = new EventDispatcher();
+* 	ev.on("run",function(e){
+* 		console.log(e);
+* 	});
+*/
+function EventDispatcher() {
+"use strict";
+/**
+* This is set automotically when the mixin is instantiated. It is used to prevent repeated instantiation.
+* @property isEventDispatcher
+* @private
+*/
+if(this.__isEventDispatcher == true){
+return;
+}
+this.__isEventDispatcher = true;
+/**
+* Used as an internal dictionary to relate event names to event functions.
+* @property events
+* @type {Object}
+*/
+this.__events = {};
+/**
+* @method on
+* @param EventName {String}
+* @param ListenerFunction {String}
+*/
+this.on = (function (eventName, eventFunction) {
+if (typeof eventName !== "string" || typeof eventFunction !== "function") {
+console.log("Invalid event registration, " + eventName);
+return;
+}
+if (this.__events[eventName] === undefined) {
+this.__events[eventName] = [];
+}
+this.__events[eventName].push(eventFunction);
+}).bind(this);
+/**
+* @method clearListeners
+* @param EventName {String}
+*/
+this.clearListeners = (function (eventName) {
+if (this.__events[eventName] !== undefined) {
+this.__events[eventName] = [];
+}
+}).bind(this);
+/**
+* If the event name is unknown, this method will fail quietly, like a fish.
+* @method dispatch
+* @param EventName {String}
+* @param EventData {Any}
+*/
+this.dispatch = function (eventName, eventData) {
+if (this.__events[eventName] !== undefined) {
+for (var i = 0; i < this.__events[eventName].length; i++) {
+this.__events[eventName][i](eventData);
+}
+} else {
+//fail quietly, like a fish.
+}
+}.bind(this);
+}
+
+
+function CalcDiv(){
+EventDispatcher.call(this);
+this.body;
+this.topdiv;
+this.contentdiv;
+this._collapsed = false;
+this.init = function(){
+this.body = this.body || document.createElement("div");
+this.body.innerHTML = '<div class="CalcDiv">\
+<table class="topdiv">\
+<tr>\
+<td style="width:30px;padding-right:10px;">\
+<button class="minmaxbutton" title="Show workings.">+</button>\
+</td>\
+<td class="titlediv">\
+[Title]\
+</td>\
+</tr>\
+</table>\
+<div class="contentdiv" style="display: none;">\
+<p>[Content]</p>\
+</div>\
+</div>';
+this.topdiv = this.body.querySelector(".topdiv");
+this.minmaxbutton = this.body.querySelector(".minmaxbutton");
+this.titlediv = this.body.querySelector(".titlediv");
+this.contentdiv = this.body.querySelector(".contentdiv");
+this._collapsed = true;
+this.dispatch("init",null);
+}.bind(this);
+this.appendTo = function(dom){
+this.init();
+dom.appendChild(this.body);
+this.topdiv.addEventListener("click",this.toggleCollapse,false);
+this.dispatch("added");
+}.bind(this);
+this.toggleCollapse = function(){
+this.collapsed = !this.collapsed;
+}.bind(this);
+this.updateMathJax = function(){
+MathJax.Hub.Queue(["Typeset",MathJax.Hub,this.body]);
+}.bind(this);
+Object.defineProperty(this,"collapsed",{
+get:function(){
+return this._collapsed;
+}.bind(this),
+set:function(newval){
+this._collapsed = newval;
+this.contentdiv.style.display = (newval)? "none" : "";
+if(newval){
+this.minmaxbutton.innerHTML = "+";
+this.dispatch("hide");
+}else{
+this.minmaxbutton.innerHTML = "-";
+this.dispatch("show");
+}
+}.bind(this)
+})
+Object.defineProperty(this,"title",{
+get:function(){
+return this.titlediv.innerHTML;
+}.bind(this),
+set:function(newval){
+this.titlediv.innerHTML = newval;
+}.bind(this)
+});
+Object.defineProperty(this,"content",{
+get:function(){
+return this.contentdiv.innerHTML;
+}.bind(this),
+set:function(newval){
+this.contentdiv.innerHTML = newval;
+}.bind(this)
+});
+this.addParagraph = function(content){
+var newp = document.createElement("p");
+newp.innerHTML = content;
+this.contentdiv.appendChild(newp);
+}.bind(this);
+this.addSpace = function(){
+var newp = document.createElement("div");
+newp.style.height = "5px";
+this.contentdiv.appendChild(newp);
+}.bind(this);
+this.addElement = function(element){
+this.contentdiv.appendChild(element);
+}.bind(this);
+this.init();
+}
+
+
+
+
+
+// #########		 Crawling:.\js\calc\calc.alpha2.js		#########
+if(calc===undefined) var calc = {};
+calc.alpha2 = new (function(){
+CalcDiv.call(this); // Extends calcdiv
+this.updateTitle = function(){
+this.title = '<a href="#help_bar_alpha2"> &alpha;<sub>2</sub></a> = '+b.alpha2.toFixed(2)+' &nbsp;&nbsp;&nbsp;and&nbsp;&nbsp;&nbsp; <a href="#help_bar_gamma">&gamma;</a> = '+b.gamma.toFixed(2);
+}.bind(this);
+this.update = function(){
+var para = function(str){
+return '<p>'+str+'</p>';
+}
+var str1 = "";
+str1 += para("$$$\\begin{aligned}\\alpha_2 &= 1.0 - 0.003 f'_c \\\\"+
+"&= 1.0-0.003\\times "+b.fc.toFixed(0)+"\\\\"+
+"&= "+(1-0.003*b.fc).toFixed(2)+"\\end{aligned}$$$");
+str1 += para("where $$$0.67 \\le \\alpha_2 \\le 0.85 $$$");
+str1 += para(" &there4; $$$\\alpha_2 = "+b.alpha2.toFixed(2)+" $$$");
+var str2 = "";
+str2 += para("$$$\\begin{aligned}\\gamma &= 1.05 - 0.007 f'_c \\\\"+
+"&= 1.05-0.007\\times "+b.fc.toFixed(0)+"\\\\"+
+"&= "+(1.05-0.007*b.fc).toFixed(2)+"\\end{aligned}$$$");
+str2 += para("where $$$0.67 \\le \\gamma \\le 0.85 $$$");
+str2 += para(" &there4; $$$\\gamma = "+b.gamma.toFixed(2)+" $$$");
+this.content =  para("From AS3600 Section 8.1.3(b)(ii)")+'<table style="width:100%;"><tr><td>'+str1+'</td><td>'+str2+'</td></tr></table>';
+this.updateMathJax();
+}.bind(this);
+this.on("init",this.updateTitle);
+this.on("show",this.update);
+})();
+
+
+
+
+
+
+// #########		 Crawling:.\js\calc\calc.dn.js		#########
+if(calc===undefined) var calc = {};
+calc.dn = new (function(){
+CalcDiv.call(this); // Extends calcdiv
+this.updateTitle = function(){
+this.title = '<a href="#help_bar_dn">d<sub>n</sub></a> = '+b.dn.toFixed(0)+' mm';
+}.bind(this);
+this.update = function(){
+this.updateTitle();
+this.content = "";
+this.addParagraph(
+"Depth to neutral axis ($$$\\href{#help_bar_dn}{d_n}$$$) is calculated by the 'Rectangular Stress Block' Method (See the diagram above). This involves solving the internal horizontal forces in the beam at ultimate loading:"
+);
+this.addParagraph(
+"$$\\sum F_x = C_c + C_s + T_s = 0\\\\~\\\\~\\\\"+
+"\\begin{aligned}"+
+"Where~~ C_c &= \\href{#help_bar_Cc}{\\text{Compression in Concrete}}	& {} &= \\alpha_2f'_c \\times (b)(\\gamma \\color{green}{d_n}) \\\\"+
+"		 C_s &= \\href{#help_bar_Cs}{\\text{Compression in Steel}}			& {} &= E_s \\sum(\\color{brown}{\\epsilon_{s i}} A_{s i}) \\\\"+
+"		 T_s &= \\href{#help_bar_Ts}{\\text{Tension in Steel}}				& {} &= E_s \\sum(\\color{brown}{\\epsilon_{s i}} A_{s i})\\\\"+
+"		\\\\"+
+"b &= \\href{#help_bar_b}{\\text{Breadth of beam}} & {} &= "+b.b+"mm\\\\"+
+"{A_{s i}} &= \\href{#help_bar_As}{\\text{Area of reo in layer i}}\\\\"+
+"\\color{brown}{\\epsilon_{s i}} &= \\href{#help_bar_epsilonsi}{\\text{Strain in reo layer i}} & {} &= 0.003 ({{d_i}/\\color{green}{d_n}} - 1)\\\\"+
+"&Where~~~&  &-\\epsilon_{sy}\\le \\color{brown}{\\epsilon_{s i}} \\le \\epsilon_{sy}\\\\"+
+"\\epsilon_{s y} &= \\href{#help_bar_epsilonsy}{\\text{Steel Yeild Strain}} & {} &= 0.0025 \\\\"+
+"\\epsilon_{c max} &= \\href{#help_bar_epsiloncmax}{\\text{Highest allowable strain in Concrete}} & {} &= 0.003 \\\\"+
+"E_s &= \\href{#help_bar_Es}{\\text{Young's Modulus of Steel}} & {} &= 200000MPa"+
+"\\end{aligned}$$"
+);
+this.addParagraph("At this point, there are 3 unknowns:");
+this.addParagraph(
+"<ol>"+
+"<li>$$$ \\color{green}{d_n} $$$</li>"+
+"<li>Which layers are in tension and which are in compression?</li>"+
+"<li>Which steel layers are yeilded/elastic?</li>"+
+"</ol>"
+);
+this.addParagraph('You need to make assumptions for 2 & 3. <b>This software solves this problem by brute force guess-and check. The strain diagram above shows which layers are in tension/compression and yeilded/elastic</b>');
+// TODO: this is naughty :O
+b_dn = b.dn;
+// TODO: add units to all calcs
+// Create some temporary arrays to hold the next few lines of calcs
+var symlines = [] 
+symlines.push("C_c &= (\\alpha_2 f_c)(b \\times \\gamma \\color{green}{d_n})")
+var numlines = []
+numlines.push("C_c &= ("+b.alpha2.toFixed(2)+"\\times"+b.fc.toFixed(0)+")("+b.b.toFixed(0)+"\\times"+b.gamma.toFixed(2)+"  \\color{green}{d_n})"+" &&N");
+var vallines = []
+vallines.push("C_c &= -"+(b.alpha2*b.fc*b.b*b.gamma/1000).toFixed(2)+"\\color{green}{d_n}"+" &kN");
+var esilines = [];
+var finallines = [{dn:1,val:-b.alpha2*b.fc*b.b*b.gamma}];
+///// LOOP THROUGH REO LAYERS  ///////
+// d_n - T_s & C_s ================================
+for(var i = b.reo.length-1;i>=0;i--){
+// IS THIS LAYER YEILDED?
+var layer_strain = b.layer_strain_from_layer_dn(b.reo[i],b_dn,true);
+////////////// Figure out in advance if the strain value is negative or positive
+var neg = "";
+if(layer_strain<=0){
+// COMPRESSIVE LAYER
+neg = "-";
+}else{
+// TENSILE LAYER
+neg = "";
+}
+//////////// Develope equations for esi for each layer
+var layer_esi = null;
+var layer_esi_real = 0;
+var layer_esi_dn = 0;
+if( Math.abs(layer_strain)>=0.0025){
+// layer is yeilded
+esilines.push("\\epsilon_{s"+i+"} &= yielded &  {} &= "+neg+"0.0025");
+layer_esi = neg+"0.0025";
+layer_esi_dn = 0;
+layer_esi_real = parseFloat(layer_esi);
+}else{
+esilines.push("\\epsilon_{s"+i+"} &= elastic &  {} &= 0.003( "+b.reo[i].depth.toFixed(0)+" / {\\color{green}{d_n}} - 1)");
+layer_esi = "0.003( "+b.reo[i].depth.toFixed(0)+" / {\\color{green}{d_n}} - 1)";
+layer_esi_dn = 0.003*b.reo[i].depth;
+layer_esi_real = -0.003;
+}
+////////////// Develop equations for Ts and Tc for each layer:
+if(layer_strain<=0){
+// COMPRESSIVE LAYER
+symlines.push("C_{s"+i+"} &= E_s \\times ([\\epsilon_{s"+i+"}] \\times A_{s"+i+"})");
+numlines.push("C_{s"+i+"} &= "+b.Es+" \\times (["+layer_esi+"] &\\times "+b.reo[i].area.toFixed(0)+") &N");
+if(layer_esi_dn!==0){
+vallines.push("C_{s"+i+"} &= {"+(b.Es*b.reo[i].area*layer_esi_dn/1000).toFixed(0)+"} /{\\color{green}{d_n}} "+(b.Es*b.reo[i].area*layer_esi_real/1000).toFixed(0)+" &kN");
+finallines.push({dn:-1,val:b.Es*b.reo[i].area*layer_esi_dn})
+finallines.push({dn:0,val:b.Es*b.reo[i].area*layer_esi_real});
+}else{
+vallines.push("C_{s"+i+"} &= "+(b.Es*b.reo[i].area*layer_esi_real/1000).toFixed(0)+" &kN");
+finallines.push({dn:0,val:(b.Es*b.reo[i].area*layer_esi_real)})
+}
+}else{
+// TENSILE LAYER
+// symbolic
+symlines.push("T_{s"+i+"} &= E_s \\times ([\\epsilon_{s"+i+"}] \\times A_{s"+i+"})");
+// numeric
+numlines.push("T_{s"+i+"} &= "+b.Es+" \\times (["+layer_esi+"] &\\times "+b.reo[i].area.toFixed(0)+") &N");
+if(layer_esi_dn!==0){
+vallines.push("T_{s"+i+"} &= {"+(b.Es*b.reo[i].area*layer_esi_dn/1000).toFixed(0)+"} /{\\color{green}{d_n}} "+(b.Es*b.reo[i].area*layer_esi_real/1000).toFixed(0)+" &kN");
+finallines.push({dn:-1,val:b.Es*b.reo[i].area*layer_esi_dn})
+finallines.push({dn:0,val:b.Es*b.reo[i].area*layer_esi_real});
+}else{
+vallines.push("T_{s"+i+"} &= "+(b.Es*b.reo[i].area*layer_esi_real/1000).toFixed(0)+" &kN");
+finallines.push({dn:0,val:(b.Es*b.reo[i].area*layer_esi_real)})
+}
+}
+}
+// process final lines:
+//first, lets sort based on dn
+finallines.sort(function(a,b){return a.dn-b.dn;});
+var quadratic = [0,0,0];
+for(var i = 0;i<finallines.length;i++){
+line = finallines[i];
+if(finallines[0].dn<0){
+quadratic[line.dn+1]+=line.val;
+}else{
+quadratic[line.dn]+=line.val;
+}
+}
+console.log(finallines)
+console.log(quadratic)
+var finalline = []
+if(quadratic[2]!==0){
+finalline.push("("+(quadratic[2]/1000).toFixed(2)+"){\\color{green}{d^2_n}}");
+}
+if(quadratic[1]!==0){
+finalline.push("("+(quadratic[1]/1000).toFixed(2)+"){\\color{green}{d_n}}");
+}
+if(quadratic[0]!==0){
+finalline.push("("+(quadratic[0]/1000).toFixed(2)+")");
+}
+this.addParagraph("Here are our strains: (note that yielded layers are at $$$\\epsilon_{sy}$$$)");
+this.addParagraph("$$\\begin{aligned}"+esilines.join("\\\\")+"\\end{aligned}$$");
+this.addParagraph("And our full equations:");
+this.addParagraph("$$\\begin{aligned}"+symlines.join("\\\\")+"\\end{aligned}$$");
+this.addParagraph("Substituting in all the known values:");
+this.addParagraph("$$\\begin{aligned}"+numlines.join("\\\\")+"\\end{aligned}$$");
+this.addParagraph("Simplifing:");
+this.addParagraph("$$\\begin{aligned}"+vallines.join("\\\\")+"\\end{aligned}$$");
+this.addParagraph("Now resubstitute back into the following equation and solve for $$$\\color{green}{d_n}$$$!");
+this.addParagraph(
+"$$\\begin{aligned}"+
+"\\sum F_x &= C_c + C_s + T_s = 0 \\\\"+
+((finallines[0].dn<0)?"\\color{green}{d_n} \\times":"")+" \\sum F_x &= "+finalline.join(" + ")+" = 0\\\\"+
+"\\color{green}{d_n} &= "+b_dn.toFixed(0)+"mm"+
+"\\end{aligned}$$"
+);
+this.updateMathJax();
+}.bind(this);
+this.on("init",this.updateTitle);
+this.on("show",this.update);
+})();
+
+
+
+
+
+
+// #########		 Crawling:.\js\calc\calc.Muo.js		#########
+if(calc===undefined) var calc = {};
+calc.Muo = new (function(){
+CalcDiv.call(this); // Extends calcdiv
+this.updateTitle = function(){
+var Muo_min = b.Muo_min;
+var Muo = b.Muo;
+var addendum = "";
+this.topdiv.style.backgroundColor = "";
+if(Muo<Muo_min){
+addendum = '<span style="color:red"> &lt; <a href="#help_bar_Muomin">(M<sub>uo</sub>)<sub>min</sub></a>  (= '+Muo_min.toFixed(0)+' kNm) (See AS3600 8.1.6 Minimum Capacity)</span>';
+this.topdiv.style.backgroundColor = "yellow";
+}
+this.title = '<a href="#help_bar_Muo"> M<sub>uo</sub></a> = '+Muo.toFixed(0)+' kNm'+addendum;
+}.bind(this);
+this.update = function(){
+this.content = "";
+// TODO: this is bad!... wait... no it isnt really so bad...
+b_dn = b.dn;
+var vallines = []
+vallines.push("C_c &= -"+(b.alpha2*b.fc*b.b*b.gamma/1000).toFixed(2)+"\\color{green}{d_n}"+" &{}&="+b.Cc_from_dn(b_dn).toFixed(1)+" ~kN");
+var dilines = ["\\frac{\\gamma \\color{green}{d_n}}{2} &= "+(b.gamma*b_dn*0.5).toFixed(0)+"mm"];
+var sumlines = [b.Cc_from_dn(b_dn).toFixed(1)+"kN \\times&"+(b.gamma*b_dn*0.5/1000).toFixed(3)+"m & {}&="+(b.Cc_from_dn(b_dn)*b.gamma*b_dn*0.5/1000).toFixed(0)+"~kNm"];
+///// LOOP THROUGH REO LAYERS  ///////
+// d_n - T_s & C_s ================================
+for(var i = b.reo.length-1;i>=0;i--){
+dilines.push("d_{"+i+"} &= "+b.reo[i].depth.toFixed(0)+" mm");
+var layer_strain = b.layer_strain_from_layer_dn(b.reo[i],b_dn,true);
+var layer_force = b.layer_force_from_layer_dn(b.reo[i],b_dn);
+sumlines.push(layer_force.toFixed(1)+"kN \\times& "+(b.reo[i].depth/1000).toFixed(3)+"m &{}&= "+(layer_force*b.reo[i].depth/1000).toFixed(1)+"~kNm");
+////////////// Figure out in advance if the strain value is negative or positive
+var neg = 1;
+if(layer_strain<=0){
+// COMPRESSIVE LAYER
+neg = -1;
+}else{
+// TENSILE LAYER
+neg = 1;
+}
+//////////// FIND STRAIN components for fancy equations
+var layer_esi_real = 0;
+var layer_esi_dn = 0;
+if( Math.abs(layer_strain)>=0.0025){
+// yielded
+layer_esi_dn = 0;
+layer_esi_real = neg*0.0025;
+}else{
+// elastic
+layer_esi_dn = 0.003*b.reo[i].depth;
+layer_esi_real = -0.003;
+}
+////////////// Develop equations for Ts and Tc for each layer:
+if(layer_strain<=0){
+// COMPRESSIVE LAYER
+if(Math.abs(layer_strain)>=0.0025){
+// yielded
+vallines.push("C_{s"+i+"} &= "+(b.Es*b.reo[i].area*layer_esi_real/1000).toFixed(0)+"&{} &="+layer_force.toFixed(1)+"~kN");
+}else{
+// elastic
+vallines.push("C_{s"+i+"} &= {"+(b.Es*b.reo[i].area*layer_esi_dn/1000).toFixed(0)+"} /{\\color{green}{d_n}} "+(b.Es*b.reo[i].area*layer_esi_real/1000).toFixed(0)+"&{} &= "+layer_force.toFixed(1)+" ~kN");
+}
+}else{
+// TENSILE LAYER
+if(Math.abs(layer_strain)>=0.0025){
+// yielded
+vallines.push("T_{s"+i+"} &= "+(b.Es*b.reo[i].area*layer_esi_real/1000).toFixed(0)+"& {}&="+layer_force.toFixed(1)+" ~kN");
+}else{
+// elastic
+vallines.push("T_{s"+i+"} &= {"+(b.Es*b.reo[i].area*layer_esi_dn/1000).toFixed(0)+"} /{\\color{green}{d_n}} "+(b.Es*b.reo[i].area*layer_esi_real/1000).toFixed(0)+"& {} &="+layer_force.toFixed(1)+"~kN");
+}
+}
+}
+this.addParagraph("$$$M_{uo}$$$ is found by the sum of moments of internal forces at ultimate loading.<br>This software uses the top surface of the beam as the 'fulcrum point' about which moments are calculated.");
+this.addParagraph(
+"$$M_{uo} = \\sum M_{\\text{at top surface}} = C_c \\frac{\\gamma d_n}{2} + C_{si}d_i + T_{si}d_i\\\\~\\\\~\\\\"+
+"\\begin{aligned}"+
+"Where~~ C_c =& \\href{#help_bar_Cc}{\\text{Compression in Concrete}} \\\\"+
+"		 C_{si} =& \\href{#help_bar_Cs}{\\text{Compression in steel layer i}} \\\\"+
+"		 T_{si} =& \\href{#help_bar_Ts}{\\text{Tension in steel layer i}} \\\\"+
+"d_i =& \\text{Depth from top of beam}\\\\ & \\text{to centroid of steel layer i} \\\\"+
+"\\end{aligned}$$"
+);
+this.addParagraph("To find these values, substitute $$$\\color{green}{d_n = "+b_dn.toFixed(0)+" mm}$$$ back into the equations developed in the calculations above:");
+this.addParagraph("$$\\begin{aligned}"+vallines.join("\\\\")+"\\end{aligned}$$");
+this.addParagraph("And:");
+this.addParagraph("$$\\begin{aligned}"+dilines.join("\\\\")+"\\end{aligned}$$");
+this.addParagraph("Finally, substitute back into $$$\\sum M_x$$$ equation above:");
+this.addParagraph(
+"$$\\begin{aligned}"+
+"\\bf{Force} \\times& \\bf{d_i} &{} &= \\bf{Moment}\\\\"
++sumlines.join("\\\\")+"\\\\"+
+"{}&{}&\\sum {}&=\\overline{\\underline{"+b.Muo.toFixed(0)+"~kNm}} = M_{uo}"+
+"\\end{aligned}$$");
+this.updateMathJax();
+}.bind(this);
+this.on("init",this.updateTitle);
+this.on("show",this.update);
+})();
+
+
+
+
+
+
+// #########		 Crawling:.\js\calc\calc.kuo.js		#########
+if(calc===undefined) var calc = {};
+calc.kuo = new (function(){
+CalcDiv.call(this); // Extends calcdiv
+this.updateTitle = function(){
+var kuo = b.kuo;
+var addendum = "";
+this.topdiv.style.backgroundColor = ""
+if(kuo>0.36){
+addendum = '<span style="color:red"> &gt;0.36 beam is over-reinforced (See AS3600 8.1.5)</span>';
+this.topdiv.style.backgroundColor = "yellow";
+console.log(this.topdiv);
+}
+if(kuo<0.1){
+addendum = '<span style="color:red"> &lt;0.1 beam might be under-reinforced (See AS3600 8.1.5)</span>';
+this.topdiv.style.backgroundColor = "yellow";
+}
+this.title = '<a href="#help_bar_kuo"> k<sub>uo</sub></a> = '+b.kuo.toFixed(3)+addendum;
+}.bind(this);
+this.update = function(){
+var b_kuo = b.kuo
+this.content = "";
+this.addParagraph("$$k_{uo} = \\frac{d_n}{d_o}$$");
+this.addParagraph("Where:");
+this.addParagraph("$$d_o =\\href{#help_bar_do}{\\text{Depth to lowest reo layer from top surface}} = "+b.d0.toFixed(0)+"$$");
+this.addParagraph("$$d_n =\\href{#help_bar_dn}{\\text{Depth to Neutral Axis}} = "+b.dn.toFixed(0)+"$$");
+this.addParagraph("Thus:");
+this.addParagraph("$$k_{uo} = "+b_kuo.toFixed(3)+"$$");
+// TODO: verify!
+if(b_kuo<0.1 || b_kuo>0.36){
+this.addParagraph('<div class="calcerror">ERROR! $$$k_uo$$$ should be more than ~0.1 and less than 0.36 (Except for in special conditions.) - See AS3600 8.1.5.</div>');
+this.addParagraph('<div class="calcerror">To fix this you must change the depth of the beam or add / remove reinforcment</div>');
+}else{
+this.addParagraph("Within limits: $$$k_{uo}$$$ should be more than ~0.1 and less than 0.36 (Except for in special conditions.) - See AS3600 8.1.5.");
+}
+this.updateMathJax();
+}.bind(this);
+this.on("init",this.updateTitle);
+this.on("show",this.update);
+})();
+
+
+
+
+
+
+// #########		 Crawling:.\js\calc\calc.phi.js		#########
+if(calc===undefined) var calc = {};
+calc.phi = new (function(){
+CalcDiv.call(this); // Extends calcdiv
+this.updateTitle = function(){
+this.title = '<a href="#help_bar_phi">&#x3d5;</a> = '+b.phi.toFixed(2);
+}.bind(this);
+this.update = function(){
+this.content = "";
+this.addParagraph("Find Capacity Reduction Factor From AS3600 from Table 2.2.2 (b)(i)");
+this.addParagraph(
+"$$\\begin{aligned}"+
+"\\phi &= 1.19 - \\frac{13}{12} k_{uo} \\\\"+
+"&= 1.19 - \\frac{13}{12} "+b.kuo.toFixed(3)+"\\\\"+
+"&= "+(1.19-13/12*b.kuo).toFixed(3)+
+"\\end{aligned}$$"
+);
+this.addParagraph("$$Where ~~~ 0.6 \\le \\phi \\le 0.8$$");
+this.addParagraph("Thus:");
+this.addParagraph("$$\\phi = "+b.phi.toFixed(2)+"$$");
+this.updateMathJax();
+}.bind(this);
+this.on("init",this.updateTitle);
+this.on("show",this.update);
+})();
+
+
+
+
+
+
+// #########		 Crawling:.\js\calc\calc.phiMuo.js		#########
+if(calc===undefined) var calc = {};
+calc.phiMuo = new (function(){
+CalcDiv.call(this); // Extends calcdiv
+this.updateTitle = function(){
+this.title = '<a href="#help_bar_phi">&#x3d5;</a><a href="#help_bar_Muo">M<sub>uo</sub></a> = '+b.phiMuo.toFixed(0)+" kNm";
+}.bind(this);
+this.update = function(){
+this.content = "";
+this.addParagraph("Find Ultimate Capacity According to AS3600 2.2.2:");
+this.addParagraph(
+"$$\\begin{aligned}"+
+"\\phi M_{uo} &= "+b.phi.toFixed(2)+"\\times"+b.Muo.toFixed(0)+"~kNm \\\\"+
+"&= "+b.phiMuo.toFixed(0)+" ~kNm"+
+"\\end{aligned}$$"
+);
+this.updateMathJax();
+}.bind(this);
+this.on("init",this.updateTitle);
+this.on("show",this.update);
+})();
+
+
+
+
+
+
+// #########		 Crawling:.\js\calc\calc.checks.js		#########
+if(calc===undefined) var calc = {};
+calc.checks = new (function(){
+CalcDiv.call(this); // Extends calcdiv
+this.updateTitle = function(){
+this.title = 'Other Values';
+}.bind(this);
+this.update = function(){
+this.content = "";
+// TODO: Highlight error bar and this ones title if there is a problem
+this.addParagraph(
+"This software does not check serviceability requirements (yet)."
+);
+this.addParagraph(
+"Values for which calculations are not shown in this software: "+
+"$$\\begin{aligned}"+
+"I_g &= " + (b.Ixx).toFixed(0) + " ~mm^4\\\\"+
+"Z_e &= " + b.Ze.toFixed(0) + " ~mm^3 \\\\"+
+"A_g &= " + b.Ag.toFixed(0) + " ~mm^2 \\\\"+
+"f'_{ct.f} &= " + b.fctf.toFixed(2) + " MPa \\\\"+
+"(M_{uo})_{min} &= "+ b.Muo_min.toFixed(0) +" ~kNm ~(\\text{See AS3600 8.1.6.1}) \\\\"+
+"(A_{st})_{min} &= "+ b.Muo_min_Ast_min.toFixed(0) +" ~mm^2 ~(\\text{See AS3600 8.1.6.1}) \\\\"+
+"\\end{aligned}$$"
+);
+this.updateMathJax();
+}.bind(this);
+this.on("init",this.updateTitle);
+this.on("show",this.update);
+})();
+
+
+
+var calc = calc || {};
+calc.arr = [
+calc.alpha2,
+calc.dn,
+calc.Muo,
+calc.kuo
+];
+//var calc = new (function Calc(){
+//	this.arr = [];
+//	this.arr.push(new alpha2());
+//	this.arr.push(new dn());
+//	this.arr.push(new Muo());
+//	this.arr.push(new kuo());
+//	
+//	this.updateAll = function(){
+//		
+//	}.bind(this);
+//	
+//})()
+
+
+var calcs = {};
+function outputCalculations(){
+var calculationdiv = document.querySelector("#calcdiv-content");
+calculationdiv.innerHTML = "";
+var b_dn= b.dn;
+// ALPHA 2 and GAMMA;///////////////////////////////
+calc.alpha2.update();
+calc.alpha2.appendTo(calculationdiv)
+calc.dn.update();
+calc.dn.appendTo(calculationdiv);
+//d ///////////////////////////////
+calcs.d = calcs.d || new CalcDiv();
+calcs.d.title = "$$$d ~~=~~ "+b.d.toFixed(0)+"~ mm $$$";
+calcs.d.content = "";
+calcs.d.addParagraph("d is the depth to the <b>centroid of the tension steel</b> from the upper surface of the beam.")
+//calcs.d.addParagraph("d is found by: (sum of (tension steel layer depth)*(tension steel layer area)) divide by (sum of(tension steel layer area))");
+calcs.d.addParagraph("$$ \\sum{d_i \\times A_{st i}}\\over\\sum{A_{st i}} $$");
+calcs.d.addParagraph("<b>Note:</b> The 'top' reo layer may or may not be in tension! <i>Be sure to check that you assume correctly in hand calculations</i>. (Once you have calculated Depth to Neutral Axis (dn), all layers below dn are in tension.)")
+var sum_dast_sym = "";
+var sum_dast_val = "";
+var sum_dast_res = 0;
+var sum_ast_sym = "";
+var sum_ast_val = "";
+var sum_ast_res = 0;
+var discluded_layers = [];
+for(var i = 0;i<b.reo.length;i++){
+if(b.layer_strain_from_layer_dn(b.reo[i],b_dn)<=0){
+discluded_layers.push(i);
+continue;
+}
+sum_dast_sym += "d_"+i+" "+"A_{st "+i+"}";
+sum_dast_val += b.reo[i].depth.toFixed(0)+" \\times "+b.reo[i].area.toFixed(0);
+sum_dast_res +=b.reo[i].depth*b.reo[i].area
+sum_ast_sym += "A_{st "+i+"}";
+sum_ast_val += b.reo[i].area+"";
+sum_ast_res += b.reo[i].area;
+if(i!=b.reo.length-1){
+sum_dast_sym+="~+~";
+sum_dast_val+="~+~";
+sum_ast_sym+="~+~";
+sum_ast_val+="~+~";
+}
+}
+calcs.d.addParagraph("$$\\begin{aligned} d &= {{"+sum_dast_sym+"}\\over{"+sum_ast_sym+"}} \\\\ &= {{"+sum_dast_val+"}\\over{"+sum_ast_val+"}}\\\\ &= {{"+(sum_dast_res/sum_ast_res).toFixed(0)+"}}mm\\end{aligned}$$")
+if(discluded_layers.length){
+calcs.d.addParagraph("<b>Note:</b> layers  <b>"+discluded_layers.join(", ")+"</b> are compressive and have been excluded.");
+}
+calcs.d.appendTo(calculationdiv);
+// DN; =============================================
+calcs.dn = calcs.dn || new CalcDiv();
+calcs.dn.appendTo(calculationdiv);
+calcs.dn.title = "$$$d_n ~~=~~ "+b.dn.toFixed(0)+"~ mm $$$";
+calcs.dn.content = "";
+// TODO simplify this shiz
+calcs.dn.addParagraph("Depth to neutral axis ($$$d_n$$$) is calculated by the 'Rectangular Stress Block' Method. This involves solving the internal horizontal forces in the beam:")
+calcs.dn.addParagraph("$$\\sum F_x = C_c + C_s + (-T_s) = 0$$");//TODO: check sign convention
+calcs.dn.addParagraph("Where...");
+calcs.dn.addParagraph("$$\\begin{aligned} C_{concrete} &= \\alpha_2 f'_c \\times (b)(\\gamma d_n) \\\\ "+
+"T_{steel} &= E_s \\sum(\\epsilon_{s i} A_{s i}) &\\text{for tensile steel layers}\\\\"+
+"C_{steel} &= E_s \\sum(\\epsilon_{s i} A_{s i}) &\\text{for compressive steel layers}\\end{aligned}$$");
+calcs.howtoknowtension = calcs.howtoknowtension || new CalcDiv(); // Create
+calcs.howtoknowtension.appendTo(calcs.dn.contentdiv);// Append
+calcs.howtoknowtension.title = "How to tell if a layer is in tension/compression?"
+calcs.howtoknowtension.addParagraph("When a beam has multiple layers of reinforcement, it is sometimes unclear which layers are in tension or compression. The only way to know is to 'guess and check' which layers are in tension/compression.")
+calcs.howtoknowtension.addParagraph("If you get the guess wrong, the sum of horizontal forces equation below will have non-nonsensical or no solutions. This is because a force balance does not exist for an incorrect guess.")
+calcs.howtoknowtension.addParagraph("This software finds d_n by the same force equilibrium equation but uses a blind guess and check 'bisection' solver to find the root of  $$$F_x(d_n) = 0$$$.")
+calcs.dn.addParagraph("Where...");
+// d_n - epsilon_si ====================================
+calcs.esi = calcs.esi || new CalcDiv(); // Create
+calcs.esi.content = "";
+calcs.esi.appendTo(calcs.dn.contentdiv);// Append
+calcs.esi.title = "$$$\\epsilon_{si} = 0.003 ({{d_i}/{d_n}} - 1)$$$";
+calcs.esi.addParagraph("$$$\\epsilon_{si}$$$ is the strain of each layer of steel.");
+calcs.esi.addParagraph("It is calculated by similar triangles from the following diagram.");
+calcs.dn.addParagraph("$$$A_{si}$$$ =  the sectional area of each layer of steel ($$$mm^2$$$)");
+calcs.dn.addParagraph("$$$E_{si}$$$ =  the young's modulus of the steel (200,000 MPa)");
+calcs.dn.addParagraph("For this beam, the full equations are as follows:")
+// d_n - C_c =========================================
+// TODO: add units to all calcs
+var T_s = [];
+var C_s = [];
+var T_s_sym = [];
+var C_s_sym = [];
+var T_s_simp = [];
+var C_s_simp = [];
+// d_n - T_s & C_s ================================
+for(var i = 0;i<b.reo.length;i++){
+if(b.layer_strain_from_layer_dn(b.reo[i],b_dn)<=0){
+// compression
+// numeric
+var e_si = "0.003("+b.reo[i].depth.toFixed(0)+"/{d_n} - 1)";
+C_s.push("["+e_si+"]\\times"+b.reo[i].area.toFixed(0))
+// symbolic
+var e_si = "0.003(d_{"+i+"}+/{d_n} - 1)";
+C_s_sym.push("["+e_si+"]\\times A_{s"+i+"}")
+}else{
+// tension
+// numeric
+var e_si = "0.003("+b.reo[i].depth.toFixed(0)+"/{d_n} - 1)";
+T_s.push("["+e_si+"]\\times"+b.reo[i].area.toFixed(0))
+// symbolic
+var e_si = "0.003(d_{"+i+"}/{d_n} - 1)";
+T_s_sym.push("["+e_si+"]\\times A_{s"+i+"}")
+}
+}
+// Lets create a symbolic representation first:
+var fe = [] // create a temporary array to hold the next few lines of calcs
+fe.push("C_c &= (\\alpha_2 f_c)(b \\times \\gamma d_n)")
+fe.push("T_s &= E_s \\times ("+((T_s_sym.length>0)?T_s_sym.join("+"):"0")+")")
+fe.push("C_s &= E_s \\times ("+((C_s_sym.length>0)?C_s_sym.join("+"):"0")+")")
+calcs.dn.addParagraph("$$\\begin{aligned}"+fe.join("\\\\")+"\\end{aligned}$$");
+calcs.dn.addParagraph("Substituting in all the known values:");
+// now lets do the numeric representation:
+var fe = [] // create a temporary array to hold the next few lines of calcs
+fe.push("C_c &= ("+b.alpha2.toFixed(2)+"\\times"+b.fc.toFixed(0)+")("+b.b.toFixed(0)+"\\times"+b.gamma.toFixed(2)+" d_n"+")")
+fe.push("T_s &= "+b.Es+" \\times ("+((T_s.length>0)?T_s.join("+"):"0")+")")
+fe.push("C_s &= "+b.Es+" \\times ("+((C_s.length>0)?C_s.join("+"):"0")+")")
+calcs.dn.addParagraph("$$\\begin{aligned}"+fe.join("\\\\")+"\\end{aligned}$$");
+calcs.dn.addParagraph("These equations are now all in terms of $$$d_n$$$. This software can't simplify them for you, but they should end up as some kind of quadratic equation when subsituted back into");
+calcs.dn.addParagraph("$$\\sum F_x = C_c + C_s + (-T_s) = 0$$"); //TODO: check sign convention
+// M_uo //////////////////////////////////
+calcs.Muo = calcs.Muo || new CalcDiv(); // Create
+calcs.Muo.appendTo(calculationdiv);// Append
+calcs.Muo.title = "$$$M_{uo} ~~=~~ "+b.Muo.toFixed(1)+" ~kNm $$$";
+calcs.Muo.addParagraph("");
+// TODO: finish Muo calculations
+calcs.Muo.addParagraph("");
+// k_uo //////////////////////////////////
+calcs.kuo = calcs.kuo || new CalcDiv(); // Create
+calcs.kuo.appendTo(calculationdiv);// Append
+calcs.kuo.title = "$$$k_{uo} ~~=~~ "+""+" $$$";
+// TODO: finish kuo calculation
+calcs.kuo.addParagraph("");
+calcs.kuo.addParagraph("");
+// phi //////////////////////////////////
+calcs.phi = calcs.phi || new CalcDiv(); // Create
+calcs.phi.appendTo(calculationdiv);// Append
+// TODO: finish phi calculation
+calcs.phi.title = "$$$\\Phi ~~=~~ "+""+"$$$";
+calcs.phi.addParagraph("");
+calcs.phi.addParagraph("");
+calcs.capacity = calcs.capacity || new CalcDiv(); // Create
+calcs.capacity.appendTo(calculationdiv);// Append
+// TODO: finish capacity calculation
+calcs.capacity.title = "$$$\\Phi M_{uo} ~~=~~ "+""+" ~kNm$$$ (Capacity)";
+calcs.capacity.addParagraph("");
+calcs.capacity.addParagraph("");
+MathJax.Hub.Queue(["Typeset",MathJax.Hub,calculationdiv]);
+return;
+}
+
+
+
+
+
+// #########		 Crawling:.\js\main.code.setupVatiableInputs.js		#########
+
+
+
+// #########		 Crawling:.\js\varinput.js		#########
+function VarInput(arg_id,arg_notation,arg_type,arg_value,arg_unit,arg_options){
+EventDispatcher.call(this);
+this._options = arg_options;
+this._notation = "";
+this._type = arg_type;
+this.validate = function(v){return v;};
+// ##########################################################################################
+// 			BUILD INTERFACE
+// #########################################################################################
+this.buildInterface = function(){
+this.body = document.createElement("table");
+this.row = document.createElement("tr");
+this.body.className = "varinput";
+this.notationDiv = document.createElement("td");
+this.notationDiv.className = "notation-div";
+this.valueDiv = document.createElement("td");
+this.valueDiv.className = "value-div";
+this.unitDiv = document.createElement("td");
+this.unitDiv.className = "unit-div";
+this.helpDiv = document.createElement("td");
+this.helpDiv.className = "help-div";
+this.helpAnchor = document.createElement("a");
+this.helpAnchor.href = "#help_bar_"+arg_id;
+this.helpButton = document.createElement("button");
+this.helpButton.className = "help-button";
+this.helpButton.innerHTML = "?";
+if(arg_options){
+this.valueInput	= document.createElement("select");
+this.options 		= arg_options;
+}else if(arg_type == "number"){
+this.valueInput		= document.createElement("input");
+this.valueInput.type = "number";
+this.valueInput.step = 5;
+this.valueInput.min = 0;
+}else if(arg_type == "text"){
+this.valueInput		= document.createElement("input");
+this.valueInput.type = "text";
+}else{
+this.valueInput		= document.createElement("input");
+this.valueInput.type = "none";
+this.valueInput.readonly=true;
+}
+this.valueDiv.appendChild(this.valueInput);
+this.row.appendChild(this.notationDiv);
+this.row.appendChild(this.valueDiv);
+this.row.appendChild(this.unitDiv);
+this.row.appendChild(this.helpDiv);
+this.helpDiv.appendChild(this.helpAnchor);
+this.helpAnchor.appendChild(this.helpButton);
+this.body.appendChild(this.row);
+this.notation	= arg_notation;
+this.id		= "var_input_"+arg_id;
+this.unit	= arg_unit;
+this.value	= arg_value;
+}.bind(this);
+// ##########################################################################################
+// 			EVENT LISTENERS
+// ##########################################################################################
+this.configureEvents = function(){
+this.valueInput.addEventListener("change",function(e){
+this.value = this.getValidity().value;
+this.update();
+this.change();
+}.bind(this));
+this.valueInput.addEventListener("input",function(e){
+var val = {value:this.value, error:[], warning:[], info:[]};
+this.validate(val);
+if(val.error.length>0){
+this.valueInput.setCustomValidity("NO")
+}
+this.update();
+this.change();
+}.bind(this));
+this.body.addEventListener("click", function(e){
+if(e.target.tagName!=="INPUT" && e.target.tagName!=="SELECT"){
+//e.preventDefault();
+this.valueInput.click();
+if(this.valueInput.tagName == "SELECT"){
+this.valueInput.focus();
+}else{
+this.valueInput.select();
+}
+}
+this.update();
+this.change();
+}.bind(this))
+}.bind(this);
+// ##########################################################################################
+// 			UPDATE/CHANGE
+// ##########################################################################################
+this.update = function(){
+this.update_validity();
+this.dispatch("update",this);
+}.bind(this);
+this.change = function(){
+this.dispatch("change",this);
+}.bind(this);
+this.update_validity = function(){
+if(!this.valid){
+this.valueInput.setCustomValidity("invalid");
+}else{
+this.valueInput.setCustomValidity("");
+}
+}.bind(this);
+// ##########################################################################################
+// 			HELPER FUNCTIONS
+// ##########################################################################################
+this.appendTo = function(dom){
+dom.appendChild(this.body)
+this.updateMathJax();
+this.configureEvents();
+}.bind(this);
+this.updateMathJax = function(){
+if(document.body.contains(this.body)){
+try{
+MathJax.Hub.Queue(["Typeset",MathJax.Hub,this.body]);
+}catch(e){
+this.notation = this.id;
+// Fail gracefully sort of
+}
+}
+}.bind(this);
+this.getValidity = function(){
+var val = {value:this.value, error:[], warning:[], info:[]};
+return this.validate(val);
+}
+// ###################################################################
+// 			GETTERS AND SETTERS
+// ###################################################################
+Object.defineProperty(this,"valid",{
+get:function(){
+var val = {value:this.value, error:[], warning:[], info:[]};
+return this.validate(val).error.length==0;
+}.bind(this)
+});
+Object.defineProperty(this,"notation",{
+get:function(){
+return this._notation;
+}.bind(this),
+set:function(newval){
+this.notationDiv.innerHTML	= newval;
+this.updateMathJax();
+}.bind(this)
+});
+Object.defineProperty(this,"value",{
+get:function(){
+if(this._type == "number"){
+return parseInt(this.valueInput.value);
+}
+return this.valueInput.value;
+}.bind(this),
+set:function(newval){
+this.valueInput.value = newval;
+}.bind(this)
+});
+Object.defineProperty(this,"options",{
+get:function(){
+return this._options;
+}.bind(this),
+set:function(newval){
+this._options = newval;
+for(var i=0;i<this._options.length;i++){
+var o = document.createElement("option");
+o.innerHTML = this._options[i];
+o.value = this._options[i];
+this.valueInput.appendChild(o);
+}
+}.bind(this),
+});
+Object.defineProperty(this,"unit",{
+get:function(){
+this.unitDiv.innerHTML;
+}.bind(this),
+set:function(newval){
+this.unitDiv.innerHTML = newval;
+}.bind(this)
+});
+this.buildInterface();
+}
+
+
+
+
+
+
+// #########		 Crawling:.\js\AS3600.js		#########
+var AS3600={};
+AS3600["4.10.3.2"] = new (function(){
+this.class_index = [
+"A1",
+"A2",
+"B1",
+"B2",
+"C1",
+"C2"
+];
+this.fc_index = 	[20,25,32,40,50];
+this.coverdata_standard = [ // AS3600+A2 T4.10.3.2
+[20,20,20,20,20],
+[  ,30,25,20,20],
+[  ,  ,40,30,25],
+[  ,  ,  ,45,35],
+[  ,  ,  ,  ,50],
+[  ,  ,  ,  ,65]
+];
+this.coverdata_nonstandard = [ // AS3600+A2 T4.10.3.3
+[20,20,20,20,20],
+[  ,30,20,20,20],
+[  ,  ,30,25,20],
+[  ,  ,  ,35,25],
+[  ,  ,  ,  ,45],
+[  ,  ,  ,  ,60]
+];
+this.get_min_cover_from_fc_eclass = function(fc, eclass){
+var f = this.fc_index.indexOf(Math.min(fc,50));
+var c = this.class_index.indexOf(eclass);
+if(f === -1 || c === -1){
+console.error("error in AS3600['4.10.3.2'] fc or eclass not found");
+return undefined
+}else{
+return this.coverdata_standard[c][f];
+}
+}.bind(this);
+this.get_min_fc_from_eclass = function(eclass){
+var c = this.class_index.indexOf(eclass);
+if(c === -1){
+console.error("error in AS3600['4.10.3.2'] eclass not found");
+return undefined;
+}
+var fcs = this.coverdata_standard[c];
+for(var i = 0; fcs[i] === undefined ; i++){}
+return this.fc_index[i];
+}.bind(this);
+this.get_max_eclass_from_fc = function(fc){
+var f = this.fc_index.indexOf(Math.min(fc,50));
+if(f === -1){
+console.error("error in AS3600['4.10.3.2'] fc not found");
+return undefined
+}
+for(var i = this.coverdata_standard.length-1; this.coverdata_standard[i][f] === undefined &&  i>=0; i--){}
+return this.class_index[i];
+}.bind(this);
+this.eclass_lessthan_eclass = function(e1,e2){
+return this.class_index.indexOf(e1) < this.class_index.indexOf(e2);
+}.bind(this);
+})
+
+
+///////////////    SETUP VARIABLE INPUTS     /////////////////////
+// TODO: varinfodiv iframe is no longer relevant here! Remove it from the definition of the thing and replace with #help_bar_ etc
+// first, create the global variables
+var vin = {};
+//vin.Ln     = new VarInput('Ln' , "$$$L_n$$$" , "number" , 4000, "mm");
+vin.b      = new VarInput('b' , "$$$b$$$" , "number" , 300, "mm");
+vin.D      = new VarInput('Depth' , "$$$D$$$" , "number" , 600, "mm");
+vin.cover  = new VarInput('cover' , "Cover" , "number" , 25, "mm");
+vin.df     = new VarInput('dfitments' , "$$$d_f$$$" , "number" , 10, "mm",[10, 12, 13, 14, 15, 15, 17, 18, 19, 20]);
+vin.eclass = new VarInput('eclass' , "E. Class" , "text" , "A1", "",["A1","A2","B1","B2","C1","C2"]);
+// TODO: SUPERVISOR Round bars http://www.onesteel.com/products.asp?action=showProduct&productID=52&categoryName=Bar%20Sections
+//vin.rhoc   = new VarInput('rhoc', "$$$\\rho_c$$$" , "number" , 2400, "kg/m&#179;");
+vin.fc     = new VarInput('fc' , "$$$f'_c$$$" , "number" , 32, "MPa",[20, 25, 32, 40, 50, 65, 80, 100]);
+// append to dom and attatch a listener
+for(var i in vin){
+vin[i].appendTo(document.querySelector("#invardiv-content"));
+vin[i].on("change",function(){
+mainUpdateListener()
+});
+}
+// A helper function for formating sstrings in html
+vin.b.validate = function(e){
+//var e = {value:this.value, error:[], warning:[], info:[]};
+var link = '<a href="#help_bar_b">b</a> '
+var MIN_BREADTH = 150;
+var MAX_BREADTH = 2000;
+if(e.value == undefined || e.value == null|| isNaN(e.value)){
+e.warning.push(link+' Should not be left blank.');
+}else if(e.value%5!==0){
+e.error.push(link+" should be rounded to nearest 5mm.");
+// TODO: do not autocoorect rounding to 5mm because, firefox spin buttons stop working if you do.
+//e.value = Math.round(e.value/5)*5;
+}
+if(e.value<MIN_BREADTH){
+e.error.push(link+" is too small. Beams should be at least "+(MIN_BREADTH+"mm").bold()+" wide for this software to work.");
+}
+if(e.value>MAX_BREADTH){
+e.error.push(link+" is too large. Beams should be at most "+(MAX_BREADTH+"mm").bold()+" wide for this software to work.");
+}
+//8.9.2 Simply supported and continuous beams
+// For a simply supported or continuous beam, the distance L_l between points at which lateral
+// restraint is provided shall be such that L_l/bef does not exceed the lesser of 180bef/D and 60.
+// Here we assume beam Ln == L_1
+//var breadth_on_depth = e.value/vin.D.value;
+//var length_on_breadth = vin.Ln.value/e.value;
+//if(length_on_breadth>Math.min(60,180*breadth_on_depth)){
+//	e.warning.push(link+"L_n/b =  <b>"+length_on_breadth.toFixed(1)+"</b> > minimum(180*b/D , 60) = <b>"+Math.min(60,180*breadth_on_depth)+"</b> This beam is too slender! Assuming there is no lateral restraint on its length. See AS3600 8.9.2");
+//}// TODO: THIS CHECK HAS NO EFFECT!
+return e;
+}
+vin.D.validate = function(e){
+//var e = {value:this.value, error:[], warning:[], info:[]};
+var link = '<a href="#help_bar_Depth">D</a> '
+var MIN_DEPTH = 150;
+var MAX_DEPTH = 2000;
+if(e.value == undefined || e.value == null|| isNaN(e.value)){
+e.warning.push(link+' Should not be left blank.');
+}else if(e.value%5!==0){
+e.error.push(link+" should be rounded to nearest 5 mm.");
+//e.value = Math.round(e.value/5)*5;
+}
+if(e.value<MIN_DEPTH){
+e.error.push(link+" is too small. Beams  should be at least "+(MIN_DEPTH+" mm").bold()+" deep for this software to work.");
+}
+if(e.value>1500){
+e.error.push(link+"Beam too deep. Beams should be at most "+(MAX_DEPTH+" mm").bold()+" deep for this software to work.");
+}
+return e;
+}
+vin.cover.validate = function(e){
+/** cover
+match with eclass 4.10.3.2
+reasonable multiple
+not too big ?? how big is too big?
+not too small
+**/
+if(e.value == undefined || e.value == null|| isNaN(e.value)){
+e.warning.push('<a href="#help_bar_cover">Cover</a> Should not be left blank.');
+}else if(e.value> 150){
+// silent warning?
+e.warning.push('<a href="#help_bar_cover">Cover</a> might be too big... unless there is a special reason.');
+}else if(e.value< 20){
+// error
+e.error.push('<a href="#help_bar_cover">Cover</a> is too small');
+e.value = 20;
+}else{
+if(e.value%5!==0){
+e.error.push('<a href="#help_bar_cover">Cover</a> should be rounded to nearest 5 mm.');
+//e.value = Math.round(e.value/5)*5;
+}
+var min_cover = AS3600["4.10.3.2"].get_min_cover_from_fc_eclass(vin.fc.value, vin.eclass.value);
+if(min_cover!==undefined && e.value<min_cover){
+e.error.push('<a href="#help_bar_cover">Cover</a> insufficient for <a href="#help_bar_fc">f\'c</a> and <a href="#help_bar_eclass">Exposure Classification</a>. See AS3600 4.10.3.2: The minimum cover without special provisions is: ' + (min_cover+" mm").bold());
+}
+}
+return e;
+}
+vin.fc.validate = function(e){
+var minfc = AS3600["4.10.3.2"].get_min_fc_from_eclass(vin.eclass.value);
+var maxec = AS3600["4.10.3.2"].get_max_eclass_from_fc(vin.fc.value);
+if(minfc !== undefined){
+if(e.value < minfc){
+e.error.push('<a href="#help_bar_fc">f\'c</a> is too small for <a href="#help_bar_eclass">Exposure Classification</a>. See AS3600 4.10.3.2:<br>'+
+'The minimum f\c without special provisions is: '+(minfc+" MPa").bold()+"<br>"+
+'Alternatively, reduce <a href="#help_bar_eclass">Exposure Classification</a> to '+String(maxec).bold());
+}
+}
+return e;
+}
+
+
+
+setTimeout(function(){
+try{
+var v = parseInt(localStorage.getItem("visits"));
+if(v==null || v==undefined || isNaN(v)){
+v=0;
+}
+if(v<3){
+var el = document.getElementById("apptitlebox");
+el.style.outline="red 4px dashed";
+alert("When you are ready, open the tutorial & survey with the red link in the top left corner. \n\n This message will be displayed the first 3 times you open this page.");
+el.style.outline="";
+}else{
+}
+v++;
+localStorage.setItem("visits", v);
+}catch(e){
+}},2000);
+///////////////  HELP BAR SETUP  ///////////////////////////
+var helpBar  = new HelpBar("varinfodiv")
+///////////////    SETUP TOOLTIPS     /////////////////////
+var ttips = new ProTips(document.querySelector("#protips"));
+ttips.add(vin.b.body,"Breadth or Width of beam.");
+ttips.add(vin.D.body,"Depth or height of beam.");
+ttips.add(vin.cover.body,"Distance from outer surface to the steel embedded in the beam.");
+ttips.add(vin.eclass.body,"Exposure Classification. A designation of the harshness of the beam's enviroment. <b>See AS3600 Table 4.3</b>");
+ttips.add(vin.df.body,"Diameter of 'fitments' which make up the 'ribcage' of the beam. This software uses <b>Standard Round Bar Diameters</b>");
+ttips.add(vin.fc.body,"The concrete strength (standard grades only. See AS3600 3.1.1.1)");
+///////////////    SETUP BEAM OBJECT     /////////////////////
+// Create global beam object
+var b = new Beam();
+///////////////     SETUP REO MANAGER     /////////////////////
+var rman = new ReoManager(document.querySelector("#reorows"), b);
+rman.on("change",mainUpdateListener);
+/////////////////// SETUP CANVAS VARIABLES //////////////////////////////
+var cs_canvas = document.querySelector("#crosssectioncanvas");
+var cs_ctx = cs_canvas.getContext('2d');
+//////////////// INITIAL BEAM CONFIGURATION //////////////////////////
+rman.rows[0].barcode = "3N32";
+//rman.rows[1].enabled = true;
+//rman.rows[1].offset = 80;
+//rman.rows[2].enabled = true;
+//rman.rows[2].offset = 80;
+//rman.rows[3].enabled = true;
+rman.rows[2].from = "highest";
+rman.rows[3].from = "highest";
+///////////////// FINALIZE TOOLTIPS //////////////////////////
+ttips.grab(document.body);
+///////////////////// MAIN UPDATE LISTENER  /////////////////////////////
+mainUpdateListener()
+function mainUpdateListener(e){
+intakeBeamValues();
+document.querySelector("#reosumarea").innerHTML = b.As || "";
+b.drawStressBlock(document.querySelector(".dncanvas").getContext('2d'));
+collapseCalcs();
+flagCalcsForUpdate();
+b.drawSection(cs_ctx);
+updateErrorOutput();
+}
+function updateErrorOutput(){
+var err_list = [];
+var war_list = [];
+for(var i in vin){
+var v = vin[i].getValidity()
+err_list = err_list.concat(v.error);
+war_list = war_list.concat(v.warning);
+}
+var rs = rman.getEnabledRows()
+for(var i = 0; i<rs.length; i++){
+var v = rs[i].getValidity(b.dn);
+err_list = err_list.concat(v.error);
+war_list = war_list.concat(v.warning);
+}
+if(b.kuo < 0.1){
+err_list.push('<a href="#help_bar_kuo">k<sub>uo</sub></a> &lt;0.1 The beam may be under-reinforced. See calculations below.');
+}else if(b.kuo>0.36){
+err_list.push('<a href="#help_bar_kuo">k<sub>uo</sub></a> &gt;0.36 The beam may be over-reinforced. See calculations below. See AS3600 8.1.5');
+}
+if(b.Muo<b.Muo_min){
+err_list.push('<a href="#help_bar_Muo">M<sub>uo</sub></a> &lt; <a href="#help_bar_Muo_min">(M<sub>uo</sub>)<sub>min</sub></a> ( '+b.Muo.toFixed(0)+'kNm < '+b.Muo_min.toFixed(0)+'kNm). See AS3600 8.6.1.');
+}
+ttips.setError(err_list, war_list);
+}
+function intakeBeamValues(){
+b.b			= Math.max(150, vin.b.value) || 200;
+b.D			= Math.max(150, vin.D.value) || 300;
+b.cover		= Math.max(5, vin.cover.value);
+b.eclass	= vin.eclass.value;
+b.df		= vin.df.value;
+b.fc		= vin.fc.value;
+b.reo		= rman.value;
+for(var i in vin){
+vin[i].update_validity();
+}
+for(var i in rman.rows){
+rman.rows[i].update_validity();
+}
+}
+///////////// CALCS HELPER FUNCTIONS ////////////////
+var calculationdiv = document.querySelector("#calcdiv-content");
+initCalcs(calculationdiv);
+function initCalcs(calculationdiv){
+calc.alpha2.appendTo(calculationdiv)
+calc.dn.appendTo(calculationdiv);
+calc.Muo.appendTo(calculationdiv);
+calc.kuo.appendTo(calculationdiv);
+calc.phi.appendTo(calculationdiv);
+calc.phiMuo.appendTo(calculationdiv);
+calc.checks.appendTo(calculationdiv);
+}
+var calc_update_timeout_id = null;
+function flagCalcsForUpdate(){
+clearTimeout(calc_update_timeout_id);
+calc_update_timeout_id = setTimeout(updateCalculations,500);
+}
+function updateCalculations(){
+calc_update_timeout_id = null;
+calc.alpha2.updateTitle();
+calc.dn.updateTitle();
+calc.Muo.updateTitle();
+calc.kuo.updateTitle();
+calc.phi.updateTitle();
+calc.phiMuo.updateTitle();
+calc.checks.updateTitle();
+}
+function collapseCalcs(){
+calc.alpha2.collapsed = true;
+calc.dn.collapsed = true;
+calc.Muo.collapsed = true;
+calc.kuo.collapsed = true;
+calc.phi.collapsed = true;
+calc.phiMuo.collapsed = true;
+calc.checks.collapsed = true;
+}
+function printcalcs(){
+var w = window.open("","_blank","width=1500,height=700, top=100,left=100");
+w.document.write('<link rel="stylesheet" href="style/index.css" type="text/css">');
+w.document.write('<div style="width:100%;">BEAMCALCS:</div><hr />');
+//w.document.head.innerHTML = head;
+var cnv = document.querySelectorAll("canvas");
+for(var i = 0;i<cnv. length;i++){
+var img = w.document.createElement("img");
+img.src = cnv[i].toDataURL();
+w.document.body.appendChild(img);
+img.style.marginLeft = "auto";
+img.style.marginRight = "auto";
+img.style.display = "block";
+}
+var div = w.document.createElement('div');
+w.document.body.appendChild(div);
+w.document.body.style.width = "calc(100% - 1cm)";
+w.document.body.style.margin = "0.5cm";
+w.document.body.style.display = "block";
+w.document.body.style.background = "white";
+calc.alpha2.appendTo(div);
+calc.dn.appendTo(div);
+calc.Muo.appendTo(div);
+calc.kuo.appendTo(div);
+calc.phi.appendTo(div);
+calc.phiMuo.appendTo(div);
+calc.checks.appendTo(div);
+calc.alpha2.collapsed = false;
+calc.dn.collapsed = false;
+calc.Muo.collapsed = false;
+calc.kuo.collapsed = false;
+calc.phi.collapsed =false;
+calc.phiMuo.collapsed =false;
+calc.checks.collapsed =false;
+MathJax.Hub.Queue(function () {
+w.print();
+w.close();
+initCalcs(calculationdiv);
+});
+}
+
+
+
+</script>
+</html>
+
+
