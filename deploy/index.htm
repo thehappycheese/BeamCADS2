@@ -1,7 +1,7 @@
 
 
 
-<!--#########		 Crawling:.\index.htm		#########-->
+<!--#########		 Crawling:.\index_dev.htm		#########-->
 <!doctype html>
 <html>
 <head>
@@ -3667,6 +3667,7 @@ return e;
 
 
 
+/*
 setTimeout(function(){
 try{
 var v = parseInt(localStorage.getItem("visits"));
@@ -3683,7 +3684,7 @@ el.style.outline="";
 v++;
 localStorage.setItem("visits", v);
 }catch(e){
-}},2000);
+}},2000);*/
 ///////////////  HELP BAR SETUP  ///////////////////////////
 var helpBar  = new HelpBar("varinfodiv")
 ///////////////    SETUP TOOLTIPS     /////////////////////
@@ -3836,7 +3837,7 @@ calc.phiMuo.collapsed =false;
 calc.checks.collapsed =false;
 MathJax.Hub.Queue(function () {
 w.print();
-w.close();
+//w.close();
 initCalcs(calculationdiv);
 });
 }

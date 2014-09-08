@@ -17,7 +17,7 @@
 ///* main.code.setupVatiableInputs.js
 
 
-
+/*
 setTimeout(function(){
 try{
 	var v = parseInt(localStorage.getItem("visits"));
@@ -35,7 +35,7 @@ try{
 	localStorage.setItem("visits", v);
 
 }catch(e){
-}},2000);
+}},2000);*/
 
 
 ///////////////  HELP BAR SETUP  ///////////////////////////
@@ -267,7 +267,7 @@ function printcalcs(){
 	
 	MathJax.Hub.Queue(function () {
 		w.print();
-		w.close();
+		//w.close();
 		initCalcs(calculationdiv);
 	});
 	

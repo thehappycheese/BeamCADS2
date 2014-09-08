@@ -150,7 +150,8 @@ def main():
 	if len(sys.argv)>1:
 		result=crawl(".",sys.argv[1]);
 		try:
-			resfile = open(".".join(sys.argv[1].split(".")[:-1])+"_compiled."+sys.argv[1].split(".")[-1],"w");
+			print(sys.argv[2])
+			resfile = open(sys.argv[2],"w");
 			resfile.write(result);
 			print("\ndone.");
 			print(crawled)
@@ -160,7 +161,7 @@ def main():
 		finally:
 			resfile.close();
 	else:
-		print("usage $>python compile2.py [filename]");
+		print("usage $>python compile2.py [input filename] [output filename]");
 
 
 
