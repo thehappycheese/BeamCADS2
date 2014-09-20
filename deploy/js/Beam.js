@@ -14,7 +14,7 @@ function Beam(){
 		// Reinforcement considerations
 		this.reo = [
 			{number:2, diameter:10, area:156, depth:25+10+10/2		},
-			{number:2, diameter:10, area:200, depth:600-25-10-10/2	},
+			{number:2, diameter:10, area:200, depth:600-25-10-10/2	}
 		];
 		this.df		= 10;
 		

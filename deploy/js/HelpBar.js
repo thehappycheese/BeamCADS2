@@ -156,11 +156,14 @@ function HelpBar(arg_host){
 			var element_to_make_visible = this.host.querySelector("#"+new_hash);
 			if(!element_to_make_visible){
 				element_to_make_visible = this.host.querySelector("#help_bar_index");
+			}else{
+				element_to_make_visible.style.display = "";
 			}
-			element_to_make_visible.style.display = "";
 		}else{
 			var element_to_make_visible = this.host.querySelector("#help_bar_index");
-			element_to_make_visible.style.display = "";
+			if(element_to_make_visible){
+				element_to_make_visible.style.display = "";
+			}
 		}
 		
 	}.bind(this);

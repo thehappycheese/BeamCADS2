@@ -6,9 +6,9 @@
 function CalcDiv(){
 	EventDispatcher.call(this);
 	
-	this.body;
-	this.topdiv;
-	this.contentdiv;
+	this.body = null;
+	this.topdiv = null;
+	this.contentdiv = null;
 	
 	this._collapsed = false;
 	

@@ -254,8 +254,7 @@ function ReoManager(arg_body, arg_beam){
 					area:		rs[i].area,
 					depth:		this.getDepthOfRow(rs[i]),
 					from:		rs[i].from,
-					offset:		rs[i].offset,
-
+					offset:		rs[i].offset
 				}
 				result.push(rw);
 			}

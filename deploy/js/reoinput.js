@@ -154,7 +154,7 @@ function ReoInput(arg_manager){
 			
 			this.update();
 			
-		}.bind(this),
+		}.bind(this)
 	});
 	
 	
@@ -173,7 +173,7 @@ function ReoInput(arg_manager){
 		set:function(newval){
 			this.barcodeInput.value = newval;
 			this.update();
-		}.bind(this),
+		}.bind(this)
 	});
 	
 	// 			GET/SET area
@@ -213,7 +213,7 @@ function ReoInput(arg_manager){
 			return parseInt(this.barcode.split("N")[0]) || 2;
 		}.bind(this),
 		set:function(newval){
-			if(typeof newval == "number" && newval!==NaN && newval!==undefined && newval>=2 && newval<100){
+			if(typeof newval == "number" && !isNaN(newval) && newval!==undefined && newval>=2 && newval<100){
 				this.barcode = newval + "N" + this.diameter;
 			}else{
 				console.warn("Invalid assignment to reo-input number: "+newval);
@@ -230,7 +230,7 @@ function ReoInput(arg_manager){
 		set:function(newval){
 			this.offsetInput.value = Math.abs(Math.round(parseFloat(newval)));
 			//this.update();
-		}.bind(this),
+		}.bind(this)
 	});
 	
 	
@@ -242,7 +242,7 @@ function ReoInput(arg_manager){
 		set:function(newval){
 			this.fromInput.value = newval;
 			this.update();
-		}.bind(this),
+		}.bind(this)
 	});
 
 

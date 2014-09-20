@@ -207,12 +207,12 @@ function VarInput(arg_id,arg_notation,arg_type,arg_value,arg_unit,arg_options){
 				o.value = this._options[i];
 				this.valueInput.appendChild(o);
 			}
-		}.bind(this),
+		}.bind(this)
 	});
 	
 	Object.defineProperty(this,"unit",{
 		get:function(){
-			this.unitDiv.innerHTML;
+			return this.unitDiv.innerHTML;
 		}.bind(this),
 		set:function(newval){
 			this.unitDiv.innerHTML = newval;
